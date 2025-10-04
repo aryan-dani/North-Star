@@ -1,0 +1,32 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Environments
+.venv/
+.env
+env/
+venv/
+
+# Logs and dumps
+*.log
+*.tmp
+*.bak
+
+# Data
+data/raw/*
+!data/raw/.gitkeep
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE metadata
+.vscode/
+.idea/
+
+# Model artifacts
+models/*
+!models/.gitkeep
