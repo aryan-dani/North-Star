@@ -8,6 +8,7 @@ import Analytics from "./pages/Analytics.tsx";
 import ModelInfo from "./pages/ModelInfo.tsx";
 import Models from "./pages/Models.tsx";
 import Learn from "./pages/Learn.tsx";
+import TrainingStudio from "./pages/TrainingStudio.tsx";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/model-info" element={<ModelInfo />} />
             <Route path="/models" element={<Models />} />
             <Route path="/learn" element={<Learn />} />
+            <Route path="/training" element={<TrainingStudio />} />
           </Routes>
         </Layout>
       </Router>

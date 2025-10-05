@@ -52,7 +52,12 @@ const Learn = () => {
                 <AccordionDetails>
                   <Stack spacing={2}>
                     <Box>
-                      <Chip label="Transit Method" color="primary" size="small" sx={{ mb: 1 }} />
+                      <Chip
+                        label="Transit Method"
+                        color="primary"
+                        size="small"
+                        sx={{ mb: 1 }}
+                      />
                       <Typography variant="body2" paragraph>
                         When a planet passes in front of its star, it blocks a
                         small fraction of the star's light. By measuring the
@@ -62,16 +67,26 @@ const Learn = () => {
                       </Typography>
                     </Box>
                     <Box>
-                      <Chip label="Radial Velocity" color="primary" size="small" sx={{ mb: 1 }} />
+                      <Chip
+                        label="Radial Velocity"
+                        color="primary"
+                        size="small"
+                        sx={{ mb: 1 }}
+                      />
                       <Typography variant="body2" paragraph>
                         As a planet orbits a star, its gravitational pull causes
                         the star to wobble slightly. This wobble shifts the
-                        star's light spectrum, which can be measured to infer the
-                        planet's mass and orbit.
+                        star's light spectrum, which can be measured to infer
+                        the planet's mass and orbit.
                       </Typography>
                     </Box>
                     <Box>
-                      <Chip label="Direct Imaging" color="primary" size="small" sx={{ mb: 1 }} />
+                      <Chip
+                        label="Direct Imaging"
+                        color="primary"
+                        size="small"
+                        sx={{ mb: 1 }}
+                      />
                       <Typography variant="body2">
                         Taking pictures of exoplanets by blocking out the star's
                         bright light. This method works best for large planets
@@ -113,8 +128,8 @@ const Learn = () => {
                         Super-Earths
                       </Typography>
                       <Typography variant="body2">
-                        Rocky planets larger than Earth but smaller than Neptune.
-                        Some may have conditions suitable for life.
+                        Rocky planets larger than Earth but smaller than
+                        Neptune. Some may have conditions suitable for life.
                       </Typography>
                     </Box>
                     <Box>
@@ -154,10 +169,11 @@ const Learn = () => {
                 <AccordionDetails>
                   <Typography variant="body2">
                     Our system performs <strong>classification</strong> - it
-                    categorizes objects into three classes: CONFIRMED exoplanets,
-                    CANDIDATES (potential exoplanets needing more study), and
-                    FALSE POSITIVES (not actually planets). This differs from
-                    regression, which predicts continuous numerical values.
+                    categorizes objects into three classes: CONFIRMED
+                    exoplanets, CANDIDATES (potential exoplanets needing more
+                    study), and FALSE POSITIVES (not actually planets). This
+                    differs from regression, which predicts continuous numerical
+                    values.
                   </Typography>
                 </AccordionDetails>
               </Accordion>
@@ -223,9 +239,9 @@ const Learn = () => {
                         Random Forest (Our Default)
                       </Typography>
                       <Typography variant="body2">
-                        Creates many decision trees and combines their votes. Like
-                        asking 100 experts and taking the majority opinion. Robust
-                        and accurate.
+                        Creates many decision trees and combines their votes.
+                        Like asking 100 experts and taking the majority opinion.
+                        Robust and accurate.
                       </Typography>
                     </Box>
                     <Box>
@@ -233,8 +249,9 @@ const Learn = () => {
                         Gradient Boosting
                       </Typography>
                       <Typography variant="body2">
-                        Builds trees one at a time, each correcting mistakes from
-                        the previous. Like iteratively improving predictions.
+                        Builds trees one at a time, each correcting mistakes
+                        from the previous. Like iteratively improving
+                        predictions.
                       </Typography>
                     </Box>
                     <Box>
@@ -263,8 +280,8 @@ const Learn = () => {
                         Accuracy
                       </Typography>
                       <Typography variant="body2">
-                        Percentage of correct predictions. Our RandomForest model
-                        achieves ~76% accuracy.
+                        Percentage of correct predictions. Our RandomForest
+                        model achieves ~76% accuracy.
                       </Typography>
                     </Box>
                     <Box>
@@ -341,7 +358,8 @@ const Learn = () => {
                   https://exoplanets.nasa.gov/
                 </Link>
                 <Typography variant="body2" color="text.secondary" mt={0.5}>
-                  Educational resources, latest discoveries, and interactive tools.
+                  Educational resources, latest discoveries, and interactive
+                  tools.
                 </Typography>
               </Box>
 
@@ -358,8 +376,8 @@ const Learn = () => {
                   https://www.nasa.gov/mission_pages/kepler/
                 </Link>
                 <Typography variant="body2" color="text.secondary" mt={0.5}>
-                  Learn about the Kepler Space Telescope that discovered thousands
-                  of exoplanets.
+                  Learn about the Kepler Space Telescope that discovered
+                  thousands of exoplanets.
                 </Typography>
               </Box>
 
@@ -376,8 +394,8 @@ const Learn = () => {
                   https://www.nasa.gov/tess
                 </Link>
                 <Typography variant="body2" color="text.secondary" mt={0.5}>
-                  The Transiting Exoplanet Survey Satellite, continuing exoplanet
-                  discovery.
+                  The Transiting Exoplanet Survey Satellite, continuing
+                  exoplanet discovery.
                 </Typography>
               </Box>
 
@@ -394,7 +412,8 @@ const Learn = () => {
                   https://scikit-learn.org/stable/
                 </Link>
                 <Typography variant="body2" color="text.secondary" mt={0.5}>
-                  Machine learning library used to build our classification models.
+                  Machine learning library used to build our classification
+                  models.
                 </Typography>
               </Box>
             </Stack>
@@ -416,7 +435,8 @@ const Learn = () => {
                 </Typography>
                 <Typography variant="body2">
                   Go to the Predict page and upload a CSV file with exoplanet
-                  observations, or enter values manually for a single prediction.
+                  observations, or enter values manually for a single
+                  prediction.
                 </Typography>
               </Box>
 
@@ -425,9 +445,9 @@ const Learn = () => {
                   Step 2: Get Predictions
                 </Typography>
                 <Typography variant="body2">
-                  Our machine learning model analyzes the data and classifies each
-                  object as CONFIRMED, CANDIDATE, or FALSE POSITIVE, along with
-                  confidence scores.
+                  Our machine learning model analyzes the data and classifies
+                  each object as CONFIRMED, CANDIDATE, or FALSE POSITIVE, along
+                  with confidence scores.
                 </Typography>
               </Box>
 
@@ -436,8 +456,9 @@ const Learn = () => {
                   Step 3: Analyze Results
                 </Typography>
                 <Typography variant="body2">
-                  Use the Analytics page to generate comprehensive visualizations
-                  including confusion matrices, ROC curves, and feature importance.
+                  Use the Analytics page to generate comprehensive
+                  visualizations including confusion matrices, ROC curves, and
+                  feature importance.
                 </Typography>
               </Box>
 

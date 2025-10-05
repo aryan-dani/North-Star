@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 
 from app.services.analytics_service import AnalyticsService
 from app.services.model_service import ModelService
+from app.services.training_service import TrainingService
 
 router = APIRouter()
 
@@ -27,6 +28,13 @@ def get_analytics_service(request: Request) -> AnalyticsService:
     service: AnalyticsService | None = getattr(request.app.state, "analytics_service", None)
     if service is None:
         raise HTTPException(status_code=503, detail="Analytics service unavailable")
+    return service
+
+
+def get_training_service(request: Request) -> TrainingService:
+    service: TrainingService | None = getattr(request.app.state, "training_service", None)
+    if service is None:
+        raise HTTPException(status_code=503, detail="Training service unavailable")
     return service
 
 
@@ -216,7 +224,10 @@ async def generate_analytics(
     except pd.errors.ParserError as exc:
         raise HTTPException(status_code=400, detail="Invalid CSV format") from exc
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Analytics generation error: {exc}") from exc
+        import traceback
+        error_detail = f"Analytics generation error: {str(exc)}\n{traceback.format_exc()}"
+        print(error_detail)  # Log to console
+        raise HTTPException(status_code=500, detail=f"Analytics generation error: {str(exc)}") from exc
 
 
 @router.post("/analytics/statistics")
@@ -366,3 +377,124 @@ async def switch_model(
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Error switching model: {exc}") from exc
+
+
+@router.get("/training/hyperparameters/{model_name}")
+async def get_hyperparameters(
+    model_name: str,
+    training_service: TrainingService = Depends(get_training_service)
+) -> JSONResponse:
+    """Get available hyperparameters for a specific model."""
+    try:
+        params = training_service.get_model_hyperparameters(model_name)
+        return JSONResponse(
+            content={
+                "status": "success",
+                "model_name": model_name,
+                "hyperparameters": params,
+            }
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Error retrieving hyperparameters: {exc}") from exc
+
+
+@router.post("/training/validate")
+async def validate_training_data(
+    file: UploadFile = File(...),
+    target_column: str = "koi_disposition",
+    training_service: TrainingService = Depends(get_training_service)
+) -> JSONResponse:
+    """Validate uploaded training data."""
+    try:
+        if file.filename is None or not file.filename.endswith(".csv"):
+            raise HTTPException(status_code=400, detail="File must be a CSV")
+        
+        contents = await file.read()
+        df = pd.read_csv(io.StringIO(contents.decode("utf-8")))
+        
+        validation_result = training_service.validate_data(df, target_column)
+        
+        return JSONResponse(
+            content={
+                "status": "success",
+                "validation": validation_result,
+                "timestamp": datetime.now().isoformat(),
+            }
+        )
+    except HTTPException:
+        raise
+    except pd.errors.EmptyDataError as exc:
+        raise HTTPException(status_code=400, detail="CSV file is empty") from exc
+    except pd.errors.ParserError as exc:
+        raise HTTPException(status_code=400, detail="Invalid CSV format") from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Validation error: {exc}") from exc
+
+
+@router.post("/training/train")
+async def train_new_model(
+    request: Request,
+    file: UploadFile = File(...),
+    model_name: str = "RandomForest",
+    target_column: str = "koi_disposition",
+    test_size: float = 0.2,
+    training_service: TrainingService = Depends(get_training_service)
+) -> JSONResponse:
+    """Train a new model with uploaded data."""
+    try:
+        if file.filename is None or not file.filename.endswith(".csv"):
+            raise HTTPException(status_code=400, detail="File must be a CSV")
+        
+        contents = await file.read()
+        df = pd.read_csv(io.StringIO(contents.decode("utf-8")))
+        
+        # Get hyperparameters from request form if provided
+        # For now, use defaults
+        default_params = training_service.get_model_hyperparameters(model_name)
+        hyperparameters = {}
+        for param_name, param_info in default_params.items():
+            hyperparameters[param_name] = param_info.get("default")
+        
+        # Train model
+        result = await training_service.train_model(
+            data=df,
+            target_column=target_column,
+            model_name=model_name,
+            hyperparameters=hyperparameters,
+            test_size=test_size,
+        )
+        
+        return JSONResponse(
+            content={
+                "status": "success",
+                "result": result,
+                "timestamp": datetime.now().isoformat(),
+            }
+        )
+    except HTTPException:
+        raise
+    except pd.errors.EmptyDataError as exc:
+        raise HTTPException(status_code=400, detail="CSV file is empty") from exc
+    except pd.errors.ParserError as exc:
+        raise HTTPException(status_code=400, detail="Invalid CSV format") from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Training error: {exc}") from exc
+
+
+@router.get("/training/history")
+async def get_training_history(
+    training_service: TrainingService = Depends(get_training_service)
+) -> JSONResponse:
+    """Get history of training sessions."""
+    try:
+        history = training_service.get_training_history()
+        return JSONResponse(
+            content={
+                "status": "success",
+                "history": history,
+                "total": len(history),
+            }
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Error retrieving history: {exc}") from exc
+

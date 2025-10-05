@@ -283,7 +283,11 @@ const Dashboard = () => {
                 </Typography>
                 <Stack spacing={2}>
                   <Box>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
                       Accuracy
                     </Typography>
                     <Box display="flex" alignItems="center" gap={2}>
@@ -299,7 +303,11 @@ const Dashboard = () => {
                     </Box>
                   </Box>
                   <Box>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
                       F1 Score (est.)
                     </Typography>
                     <Box display="flex" alignItems="center" gap={2}>
@@ -342,8 +350,8 @@ const Dashboard = () => {
             </Typography>
             <Typography variant="body2" color="text.secondary" paragraph>
               Our RandomForest model analyzes 24 different features including
-              orbital parameters, transit characteristics, and stellar properties
-              to make accurate classifications with ~76% accuracy.
+              orbital parameters, transit characteristics, and stellar
+              properties to make accurate classifications with ~76% accuracy.
             </Typography>
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mt: 3 }}>
               <Chip

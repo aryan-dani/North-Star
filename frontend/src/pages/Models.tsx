@@ -69,7 +69,9 @@ const Models = () => {
       await fetchModels();
       setError(null);
     } catch (err: any) {
-      setError(err.response?.data?.detail || `Failed to switch to ${modelName}`);
+      setError(
+        err.response?.data?.detail || `Failed to switch to ${modelName}`
+      );
       console.error("Error switching model:", err);
     } finally {
       setSwitching(null);
@@ -87,9 +89,11 @@ const Models = () => {
       GradientBoosting:
         "Boosting technique building trees sequentially to correct previous errors",
       SVM: "Support Vector Machine using hyperplanes for classification",
-      DecisionTree: "Single tree-based model making decisions based on feature thresholds",
+      DecisionTree:
+        "Single tree-based model making decisions based on feature thresholds",
       KNN: "K-Nearest Neighbors classifying based on proximity to training samples",
-      LogisticRegression: "Linear model using logistic function for probability estimation",
+      LogisticRegression:
+        "Linear model using logistic function for probability estimation",
       best_model: "Automatically selected best performing model from training",
     };
     return descriptions[name] || "Machine learning classification model";
@@ -126,7 +130,11 @@ const Models = () => {
 
       <Stack spacing={3}>
         {/* Current Model Card */}
-        <Card sx={{ background: "linear-gradient(135deg, #1a237e 0%, #0a0e27 100%)" }}>
+        <Card
+          sx={{
+            background: "linear-gradient(135deg, #1a237e 0%, #0a0e27 100%)",
+          }}
+        >
           <CardContent>
             <Stack spacing={2}>
               <Box display="flex" alignItems="center" gap={1}>
@@ -232,7 +240,9 @@ const Models = () => {
                             onClick={() => handleSwitchModel(model.name)}
                             disabled={switching !== null}
                           >
-                            {switching === model.name ? "Switching..." : "Switch"}
+                            {switching === model.name
+                              ? "Switching..."
+                              : "Switch"}
                           </Button>
                         )}
                       </TableCell>
@@ -256,10 +266,10 @@ const Models = () => {
                   Random Forest
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Creates multiple decision trees and combines their predictions.
-                  Excellent for handling complex patterns and resistant to
-                  overfitting. Generally provides the best balance of accuracy and
-                  speed.
+                  Creates multiple decision trees and combines their
+                  predictions. Excellent for handling complex patterns and
+                  resistant to overfitting. Generally provides the best balance
+                  of accuracy and speed.
                 </Typography>
               </Box>
               <Box>
@@ -267,9 +277,9 @@ const Models = () => {
                   Gradient Boosting
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Builds trees sequentially, each correcting errors from previous
-                  ones. Can achieve very high accuracy but may require more
-                  computational resources.
+                  Builds trees sequentially, each correcting errors from
+                  previous ones. Can achieve very high accuracy but may require
+                  more computational resources.
                 </Typography>
               </Box>
               <Box>
@@ -286,9 +296,9 @@ const Models = () => {
                   K-Nearest Neighbors (KNN)
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Classifies based on the majority class among k-nearest training
-                  examples. Simple and interpretable but can be slow with large
-                  datasets.
+                  Classifies based on the majority class among k-nearest
+                  training examples. Simple and interpretable but can be slow
+                  with large datasets.
                 </Typography>
               </Box>
               <Box>
@@ -297,7 +307,8 @@ const Models = () => {
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Fast linear model that predicts probabilities. Good baseline
-                  model and works well when decision boundaries are roughly linear.
+                  model and works well when decision boundaries are roughly
+                  linear.
                 </Typography>
               </Box>
               <Box>
@@ -305,8 +316,9 @@ const Models = () => {
                   Decision Tree
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Single tree making decisions based on feature thresholds. Highly
-                  interpretable but prone to overfitting without proper tuning.
+                  Single tree making decisions based on feature thresholds.
+                  Highly interpretable but prone to overfitting without proper
+                  tuning.
                 </Typography>
               </Box>
             </Stack>

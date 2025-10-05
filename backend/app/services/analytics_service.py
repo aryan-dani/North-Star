@@ -283,39 +283,51 @@ class AnalyticsService:
             }
 
         if y_true is not None:
+            # Convert to numpy array and handle mixed types
             y_true_array = np.asarray(y_true)
-            from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+            
+            # Remove NaN values and ensure consistent types
+            mask = pd.notna(y_true_array)
+            y_true_clean = y_true_array[mask]
+            predictions_clean = predictions[mask]
+            
+            # Convert everything to strings for consistent comparison
+            y_true_clean = y_true_clean.astype(str)
+            predictions_clean = predictions_clean.astype(str)
+            
+            if len(y_true_clean) > 0:
+                from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
-            stats["performance_metrics"] = {
-                "accuracy": round(float(accuracy_score(y_true_array, predictions)), 4),
-                "precision_macro": round(
-                    float(
-                        precision_score(
-                            y_true_array, predictions, average="macro", zero_division=0
-                        )
+                stats["performance_metrics"] = {
+                    "accuracy": round(float(accuracy_score(y_true_clean, predictions_clean)), 4),
+                    "precision_macro": round(
+                        float(
+                            precision_score(
+                                y_true_clean, predictions_clean, average="macro", zero_division=0
+                            )
+                        ),
+                        4,
                     ),
-                    4,
-                ),
-                "recall_macro": round(
-                    float(
-                        recall_score(
-                            y_true_array, predictions, average="macro", zero_division=0
-                        )
+                    "recall_macro": round(
+                        float(
+                            recall_score(
+                                y_true_clean, predictions_clean, average="macro", zero_division=0
+                            )
+                        ),
+                        4,
                     ),
-                    4,
-                ),
-                "f1_macro": round(
-                    float(f1_score(y_true_array, predictions, average="macro", zero_division=0)),
-                    4,
-                ),
-            }
+                    "f1_macro": round(
+                        float(f1_score(y_true_clean, predictions_clean, average="macro", zero_division=0)),
+                        4,
+                    ),
+                }
 
-            report_dict = cast(
-                Dict[str, Any],
-                classification_report(
-                    y_true_array, predictions, output_dict=True, zero_division=0
-                ),
-            )
+                report_dict = cast(
+                    Dict[str, Any],
+                    classification_report(
+                        y_true_clean, predictions_clean, output_dict=True, zero_division=0
+                    ),
+                )
             stats["per_class_metrics"] = {
                 cls: {
                     "precision": round(metrics["precision"], 4),
@@ -336,7 +348,13 @@ class AnalyticsService:
         if model is None:
             raise ValueError("Model not loaded. Call load_model() first.")
 
-        predictions = model.predict(data)
+        # Use model_service.predict() which handles preprocessing
+        try:
+            predictions = model.predict(data)
+        except Exception as e:
+            # If direct prediction fails, try through model service
+            raise ValueError(f"Error making predictions: {str(e)}. Ensure the CSV has all required features.")
+
         probabilities: Optional[np.ndarray] = None
         if hasattr(model, "predict_proba"):
             try:
@@ -359,13 +377,21 @@ class AnalyticsService:
         )
         if y_true is not None:
             true_values = y_true.to_numpy()
-            plots["confusion_matrix"] = self.generate_confusion_matrix_plot(
-                true_values, predictions, labels
-            )
-            if probabilities is not None:
-                plots["roc_curves"] = self.generate_roc_curves(
-                    true_values, probabilities, labels
+            
+            # Clean the data for mixed types
+            mask = pd.notna(true_values)
+            true_values_clean = true_values[mask].astype(str)
+            predictions_clean = predictions[mask].astype(str)
+            
+            if len(true_values_clean) > 0:
+                plots["confusion_matrix"] = self.generate_confusion_matrix_plot(
+                    true_values_clean, predictions_clean, labels
                 )
+                if probabilities is not None:
+                    probabilities_clean = probabilities[mask]
+                    plots["roc_curves"] = self.generate_roc_curves(
+                        true_values_clean, probabilities_clean, labels
+                    )
         if probabilities is not None:
             plots["confidence_distribution"] = self.generate_confidence_distribution_plot(
                 probabilities

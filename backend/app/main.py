@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from .api import api_router
 from .services.analytics_service import AnalyticsService
 from .services.model_service import ModelService
+from .services.training_service import TrainingService
 
 
 def create_app() -> FastAPI:
@@ -32,16 +33,20 @@ def create_app() -> FastAPI:
 
     model_service = ModelService()
     analytics_service: AnalyticsService | None = None
+    training_service: TrainingService | None = None
 
     @app.on_event("startup")
     async def startup_event() -> None:
-        nonlocal analytics_service
+        nonlocal analytics_service, training_service
         model_service.load_model()
         analytics_service = AnalyticsService(model_service)
+        training_service = TrainingService()
         app.state.model_service = model_service
         app.state.analytics_service = analytics_service
+        app.state.training_service = training_service
         print("✓ Model loaded successfully")
         print("✓ Analytics service initialised")
+        print("✓ Training service initialised")
 
     @app.exception_handler(404)
     async def not_found_handler(request: Request, exc: Any) -> JSONResponse:
