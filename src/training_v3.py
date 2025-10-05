@@ -23,9 +23,9 @@ print("="*70)
 print("ML Model Training Pipeline v3".center(70))
 print("="*70)
 
-CSV_PATH = "../data/merged_all_missions.csv"
-MODELS_DIR = "../models"
-OUTPUT_DIR = "../output"
+CSV_PATH = "data/merged_all_missions.csv"
+MODELS_DIR = "models"
+OUTPUT_DIR = "output"
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 os.makedirs(MODELS_DIR, exist_ok=True)
@@ -227,8 +227,9 @@ if task == "classification" and best_pipe is not None:
     plt.colorbar()
     
     tick_marks = np.arange(len(np.unique(y_test)))
-    plt.xticks(tick_marks, np.unique(y_test), rotation=45, ha="right")
-    plt.yticks(tick_marks, np.unique(y_test))
+    unique_labels = [str(label) for label in np.unique(y_test)]
+    plt.xticks(tick_marks, unique_labels, rotation=45, ha="right")
+    plt.yticks(tick_marks, unique_labels)
     
     
     thresh = cm.max() / 2.

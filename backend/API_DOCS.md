@@ -7,6 +7,7 @@ A FastAPI-based REST API for exoplanet classification using a trained RandomFore
 ---
 
 ## Table of Contents
+
 - [Getting Started](#getting-started)
 - [Base URL](#base-url)
 - [Authentication](#authentication)
@@ -21,29 +22,23 @@ A FastAPI-based REST API for exoplanet classification using a trained RandomFore
 
 ### Installation
 
-1. Navigate to the backend directory:
-```bash
-cd backend
-```
+1. Install dependencies from the project root:
 
-2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Run the server:
-```bash
-python main.py
-```
+2. Start the server from the backend directory:
 
-Or using uvicorn directly:
 ```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+cd backend
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Access Documentation
 
 Once the server is running:
+
 - **Swagger UI**: http://localhost:8000/docs
 - **ReDoc**: http://localhost:8000/redoc
 - **API Root**: http://localhost:8000/
@@ -63,6 +58,7 @@ For production, replace with your deployment URL.
 ## Authentication
 
 Currently, the API does not require authentication. For production deployment, consider implementing:
+
 - API Key authentication
 - OAuth2
 - JWT tokens
@@ -78,6 +74,7 @@ Currently, the API does not require authentication. For production deployment, c
 Returns API information and available endpoints.
 
 **Response:**
+
 ```json
 {
   "message": "Exoplanet Classification API",
@@ -103,6 +100,7 @@ Returns API information and available endpoints.
 Check if the API and model are operational.
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -120,6 +118,7 @@ Check if the API and model are operational.
 Get detailed information about the loaded model.
 
 **Response:**
+
 ```json
 {
   "model_name": "RandomForest",
@@ -141,6 +140,7 @@ Get detailed information about the loaded model.
 Get the list of features expected by the model.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -162,6 +162,7 @@ Get the list of features expected by the model.
 Get model performance metrics.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -181,21 +182,19 @@ Get model performance metrics.
 Upload a CSV file and get predictions with probabilities and metrics.
 
 **Request:**
+
 - **Content-Type**: `multipart/form-data`
 - **Body**: CSV file
 
 **Response:**
+
 ```json
 {
   "status": "success",
   "filename": "test_data.csv",
   "total_rows": 100,
   "predictions": ["CONFIRMED", "CANDIDATE", "FALSE POSITIVE", "..."],
-  "probabilities": [
-    [0.05, 0.92, 0.03],
-    [0.15, 0.75, 0.10],
-    "..."
-  ],
+  "probabilities": [[0.05, 0.92, 0.03], [0.15, 0.75, 0.1], "..."],
   "metrics": {
     "total_predictions": 100,
     "class_distribution": {
@@ -218,10 +217,12 @@ Upload a CSV file and get predictions with probabilities and metrics.
 Upload a CSV file and get detailed row-by-row predictions.
 
 **Request:**
+
 - **Content-Type**: `multipart/form-data`
 - **Body**: CSV file
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -245,7 +246,7 @@ Upload a CSV file and get detailed row-by-row predictions.
       "probabilities": {
         "CANDIDATE": 0.75,
         "CONFIRMED": 0.15,
-        "FALSE POSITIVE": 0.10
+        "FALSE POSITIVE": 0.1
       }
     }
   ],
@@ -295,8 +296,10 @@ Upload a CSV file and get detailed row-by-row predictions.
 Make predictions using JSON input.
 
 **Request:**
+
 - **Content-Type**: `application/json`
 - **Body**:
+
 ```json
 {
   "data": {
@@ -315,6 +318,7 @@ Make predictions using JSON input.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -334,10 +338,12 @@ Make predictions using JSON input.
 Generate comprehensive analytics including statistics and visualizations.
 
 **Request:**
+
 - **Content-Type**: `multipart/form-data`
 - **Body**: CSV file (optionally with target column for performance metrics)
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -398,6 +404,7 @@ Generate comprehensive analytics including statistics and visualizations.
 ```
 
 **Note**: Plots are returned as base64-encoded PNG images that can be directly displayed in HTML:
+
 ```html
 <img src="data:image/png;base64,{plot_base64}" alt="Plot" />
 ```
@@ -411,10 +418,12 @@ Generate comprehensive analytics including statistics and visualizations.
 Get statistics without generating plots (faster response).
 
 **Request:**
+
 - **Content-Type**: `multipart/form-data`
 - **Body**: CSV file
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -440,6 +449,7 @@ Get statistics without generating plots (faster response).
 Get information about available visualization types.
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -490,16 +500,19 @@ Get information about available visualization types.
 ### Using cURL
 
 #### 1. Health Check
+
 ```bash
 curl -X GET "http://localhost:8000/health"
 ```
 
 #### 2. Model Info
+
 ```bash
 curl -X GET "http://localhost:8000/model/info"
 ```
 
 #### 3. Upload CSV for Prediction
+
 ```bash
 curl -X POST "http://localhost:8000/predict" \
   -H "accept: application/json" \
@@ -508,6 +521,7 @@ curl -X POST "http://localhost:8000/predict" \
 ```
 
 #### 4. Batch Prediction
+
 ```bash
 curl -X POST "http://localhost:8000/predict/batch" \
   -H "accept: application/json" \
@@ -516,6 +530,7 @@ curl -X POST "http://localhost:8000/predict/batch" \
 ```
 
 #### 5. JSON Prediction
+
 ```bash
 curl -X POST "http://localhost:8000/predict/json" \
   -H "Content-Type: application/json" \
@@ -530,6 +545,7 @@ curl -X POST "http://localhost:8000/predict/json" \
 ```
 
 #### 6. Full Analytics
+
 ```bash
 curl -X POST "http://localhost:8000/analytics" \
   -H "accept: application/json" \
@@ -538,6 +554,7 @@ curl -X POST "http://localhost:8000/analytics" \
 ```
 
 #### 7. Statistics Only
+
 ```bash
 curl -X POST "http://localhost:8000/analytics/statistics" \
   -H "accept: application/json" \
@@ -546,6 +563,7 @@ curl -X POST "http://localhost:8000/analytics/statistics" \
 ```
 
 #### 8. Get Plot Types
+
 ```bash
 curl -X GET "http://localhost:8000/analytics/plots/types"
 ```
@@ -555,11 +573,13 @@ curl -X GET "http://localhost:8000/analytics/plots/types"
 ### Using Python
 
 #### Install requests library
+
 ```bash
 pip install requests
 ```
 
 #### Example: Upload CSV
+
 ```python
 import requests
 
@@ -571,6 +591,7 @@ print(response.json())
 ```
 
 #### Example: JSON Prediction
+
 ```python
 import requests
 
@@ -589,6 +610,7 @@ print(response.json())
 ```
 
 #### Example: Get Full Analytics
+
 ```python
 import requests
 import base64
@@ -614,6 +636,7 @@ for plot_name, plot_base64 in plots.items():
 ```
 
 #### Example: Display Plots in Jupyter Notebook
+
 ```python
 import requests
 import base64
@@ -637,25 +660,27 @@ for plot_name, plot_base64 in plots.items():
 ### Using JavaScript (Fetch API)
 
 #### Upload CSV
+
 ```javascript
 const formData = new FormData();
-formData.append('file', fileInput.files[0]);
+formData.append("file", fileInput.files[0]);
 
-fetch('http://localhost:8000/predict', {
-  method: 'POST',
-  body: formData
+fetch("http://localhost:8000/predict", {
+  method: "POST",
+  body: formData,
 })
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error("Error:", error));
 ```
 
 #### JSON Prediction
+
 ```javascript
-fetch('http://localhost:8000/predict/json', {
-  method: 'POST',
+fetch("http://localhost:8000/predict/json", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
     data: {
@@ -663,12 +688,12 @@ fetch('http://localhost:8000/predict/json', {
       koi_duration: 2.9575,
       koi_depth: 616.0,
       // ... other features
-    }
-  })
+    },
+  }),
 })
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error("Error:", error));
 ```
 
 ---
@@ -676,27 +701,30 @@ fetch('http://localhost:8000/predict/json', {
 ## Response Formats
 
 ### Success Response
+
 All successful responses include:
+
 - `status`: "success"
 - `timestamp`: ISO format timestamp
 - Additional endpoint-specific data
 
 ### Prediction Response Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `predictions` | array | List of predicted classes |
-| `probabilities` | array | Probability distributions for each prediction |
-| `confidence` | float | Confidence score (max probability) |
-| `metrics` | object | Aggregated metrics |
-| `class_distribution` | object | Count of predictions per class |
-| `average_confidence` | float | Mean confidence across all predictions |
+| Field                | Type   | Description                                   |
+| -------------------- | ------ | --------------------------------------------- |
+| `predictions`        | array  | List of predicted classes                     |
+| `probabilities`      | array  | Probability distributions for each prediction |
+| `confidence`         | float  | Confidence score (max probability)            |
+| `metrics`            | object | Aggregated metrics                            |
+| `class_distribution` | object | Count of predictions per class                |
+| `average_confidence` | float  | Mean confidence across all predictions        |
 
 ---
 
 ## Error Handling
 
 ### Error Response Format
+
 ```json
 {
   "detail": "Error message describing what went wrong"
@@ -705,16 +733,17 @@ All successful responses include:
 
 ### Common HTTP Status Codes
 
-| Code | Meaning | Common Causes |
-|------|---------|---------------|
-| 200 | Success | Request processed successfully |
-| 400 | Bad Request | Invalid file format, empty file, missing data |
-| 404 | Not Found | Endpoint doesn't exist |
-| 500 | Internal Server Error | Model error, server issue |
+| Code | Meaning               | Common Causes                                 |
+| ---- | --------------------- | --------------------------------------------- |
+| 200  | Success               | Request processed successfully                |
+| 400  | Bad Request           | Invalid file format, empty file, missing data |
+| 404  | Not Found             | Endpoint doesn't exist                        |
+| 500  | Internal Server Error | Model error, server issue                     |
 
 ### Error Examples
 
 #### Invalid File Type
+
 ```json
 {
   "detail": "File must be a CSV"
@@ -722,6 +751,7 @@ All successful responses include:
 ```
 
 #### Empty CSV
+
 ```json
 {
   "detail": "CSV file is empty"
@@ -729,6 +759,7 @@ All successful responses include:
 ```
 
 #### Model Not Loaded
+
 ```json
 {
   "detail": "Model not loaded. Call load_model() first."
@@ -742,15 +773,17 @@ All successful responses include:
 Your CSV file should contain the following columns (in any order):
 
 ### Required Columns
+
 ```
-koi_period, koi_duration, koi_depth, koi_ror, koi_model_snr, 
-koi_num_transits, koi_impact, koi_dor, koi_teq, koi_srho, 
-koi_kepmag, koi_gmag, koi_rmag, koi_imag, koi_zmag, 
-koi_jmag, koi_hmag, koi_kmag, ra, dec, mission_id, 
+koi_period, koi_duration, koi_depth, koi_ror, koi_model_snr,
+koi_num_transits, koi_impact, koi_dor, koi_teq, koi_srho,
+koi_kepmag, koi_gmag, koi_rmag, koi_imag, koi_zmag,
+koi_jmag, koi_hmag, koi_kmag, ra, dec, mission_id,
 object_name, host_name, source_primary_id
 ```
 
 ### Example CSV
+
 ```csv
 koi_period,koi_duration,koi_depth,koi_ror,koi_model_snr,...
 9.48803557,2.9575,616.0,0.022344,35.8,...
@@ -764,6 +797,7 @@ koi_period,koi_duration,koi_depth,koi_ror,koi_model_snr,...
 ## Rate Limiting
 
 Currently, no rate limiting is implemented. For production:
+
 - Consider implementing rate limiting using middleware
 - Suggested: 100 requests per minute per IP
 
@@ -772,6 +806,7 @@ Currently, no rate limiting is implemented. For production:
 ## CORS Configuration
 
 The API currently allows all origins (`*`). For production:
+
 ```python
 app.add_middleware(
     CORSMiddleware,
@@ -795,6 +830,7 @@ gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000
 ### Using Docker
 
 Create `Dockerfile`:
+
 ```dockerfile
 FROM python:3.10-slim
 
@@ -808,6 +844,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 Build and run:
+
 ```bash
 docker build -t exoplanet-api .
 docker run -p 8000:8000 exoplanet-api
@@ -818,6 +855,7 @@ docker run -p 8000:8000 exoplanet-api
 ## Support
 
 For issues or questions:
+
 - Check the interactive documentation: http://localhost:8000/docs
 - Review error messages in the response
 - Check server logs for detailed error traces
@@ -827,6 +865,7 @@ For issues or questions:
 ## Version History
 
 ### v1.0.0 (Current)
+
 - Initial release
 - RandomForest classifier
 - CSV upload support

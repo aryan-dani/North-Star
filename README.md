@@ -1,24 +1,40 @@
 # North-Star: Exoplanet Candidate Classification
 
-North-Star is a complete machine learning web application for identifying and classifying exoplanet candidates from the NASA Kepler catalog. The project includes:
-- **Multiple ML Models**: Random Forest, Gradient Boosting, SVM, Decision Trees, and more
-- **REST API Backend**: FastAPI-powered service for real-time predictions
-- **Production-Ready**: Trained models with comprehensive evaluation metrics
-- **Scalable Architecture**: Easy integration with frontend applications
+🏆 **NASA Space Apps Challenge 2025 Submission**
+
+North-Star is a complete full-stack machine learning web application for identifying and classifying exoplanet candidates from the NASA Kepler catalog. The project includes:
+
+- **Multiple ML Models**: 7 trained models including Random Forest (76% accuracy)
+- **REST API Backend**: FastAPI-powered service with 11+ endpoints
+- **Modern Frontend**: React + TypeScript with Material-UI
+- **Comprehensive Analytics**: 7+ visualization types with detailed metrics
+- **Production-Ready**: Fully documented with deployment guides
 
 ## 🚀 Quick Start
 
-### Backend API (Recommended)
+### Complete Setup (Frontend + Backend)
 
+**Backend:**
 ```powershell
-cd backend
+# Install Python dependencies
 pip install -r requirements.txt
+
+# Start the API server
+cd backend
 python main.py
 ```
+Access at: http://localhost:8000/docs
 
-Access the API:
-- **Swagger UI**: http://localhost:8000/docs
-- **API Endpoint**: http://localhost:8000/predict
+**Frontend:**
+```powershell
+# Install Node dependencies
+cd frontend
+npm install
+
+# Start the development server
+npm run dev
+```
+Access at: http://localhost:5174
 
 ### Training Models
 
@@ -27,45 +43,51 @@ cd src
 python training_v3.py
 ```
 
+### 📚 Documentation
+
+- **[PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md)** - Comprehensive project documentation
+- **[backend/README.md](backend/README.md)** - Backend setup and API details
+- **[backend/API_DOCS.md](backend/API_DOCS.md)** - Complete API reference
+- **[frontend/README.md](frontend/README.md)** - Frontend setup and usage
+
 ## 📁 Repository Layout
 
 ```
 North-Star/
+├── frontend/              # React + TypeScript web interface
+│   ├── src/
+│   │   ├── components/   # UI components (Header, Sidebar, Layout)
+│   │   ├── pages/        # Dashboard, Predict, Analytics, ModelInfo
+│   │   ├── services/     # API integration
+│   │   └── theme/        # Material-UI space theme
+│   └── README.md
 ├── backend/              # FastAPI REST API backend
-│   ├── main.py          # FastAPI application with endpoints
-│   ├── model_utils.py   # Model loading and prediction utilities
-│   ├── requirements.txt # Backend dependencies
-│   └── API_DOCS.md      # Complete API documentation
-├── data/                # Dataset storage
-│   ├── merged_all_missions.csv  # Combined dataset
-│   ├── README.md
-│   └── raw/
-├── docs/
-│   ├── reference-papers/ # Research papers and references
-│   └── *.png            # Model evaluation visualizations
-├── models/              # Trained model artifacts (.joblib files)
-│   ├── best_model_*.joblib
-│   ├── RandomForest_*.joblib
-│   └── ... (other trained models)
-├── output/              # Training results and visualizations
-│   ├── model_results_*.csv
-│   ├── confusion_matrix_*.png
-│   └── training_metadata_*.json
+│   ├── app/
+│   │   ├── main.py      # FastAPI application
+│   │   ├── api/         # API routes
+│   │   └── services/    # Model & analytics services
+│   ├── main.py          # Server entry point
+│   ├── API_DOCS.md      # Complete API documentation
+│   └── README.md
 ├── src/                 # Training scripts
-│   ├── __init__.py
-│   ├── train_model.py   # Original training script
-│   ├── training_v2.py   # Enhanced training with metrics
-│   └── training_v3.py   # Multi-model training pipeline
-├── requirements.txt     # Project dependencies
-└── README.md
+│   ├── training_v3.py   # Multi-model pipeline ⭐
+│   ├── training_v2.py   # Enhanced training
+│   └── train_model.py   # Basic training
+├── models/              # Trained model artifacts (.joblib files)
+├── data/                # Dataset storage
+│   ├── merged_all_missions.csv
+│   └── raw/
+├── output/              # Training results and visualizations
+├── docs/                # Documentation & reference papers
+├── requirements.txt     # Python dependencies
+├── PROJECT_OVERVIEW.md  # Comprehensive project documentation
+└── README.md            # This file
 ```
-
-> ⚠️ PDF content is not parsed programmatically here. Review the files in
-> `docs/reference-papers/` directly for the full research context.
 
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
+
 - Python 3.10 or higher
 - pip or conda package manager
 
@@ -115,26 +137,32 @@ or storing download instructions instead of committing the raw data.
 The project includes three training scripts with increasing sophistication:
 
 #### Basic Training (`train_model.py`)
+
 ```bash
 cd src
 python train_model.py
 ```
+
 Trains a single RandomForest model with basic metrics.
 
 #### Enhanced Training (`training_v2.py`)
+
 ```bash
 cd src
 python training_v2.py
 ```
+
 Includes detailed metrics, visualizations, and progress tracking.
 
 #### Multi-Model Training (`training_v3.py` - Recommended)
+
 ```bash
 cd src
 python training_v3.py
 ```
 
 **Features:**
+
 - Trains 7+ models (RandomForest, GradientBoosting, SVM, etc.)
 - Saves all models to `../models/` directory
 - Generates comprehensive evaluation metrics
@@ -143,6 +171,7 @@ python training_v3.py
 - Timestamped outputs for version tracking
 
 **Output includes:**
+
 - Individual model files: `{ModelName}_{timestamp}.joblib`
 - Best model: `best_model_classification_{timestamp}.joblib`
 - Results CSV with all metrics
@@ -162,24 +191,26 @@ python main.py
 The API will start at: **http://localhost:8000**
 
 #### Interactive Documentation
+
 - **Swagger UI**: http://localhost:8000/docs (Try out endpoints)
 - **ReDoc**: http://localhost:8000/redoc (API reference)
 
 #### API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | API information |
-| `/health` | GET | Health check |
-| `/model/info` | GET | Model metadata |
-| `/model/features` | GET | Expected features |
-| `/predict` | POST | Upload CSV for predictions |
-| `/predict/batch` | POST | Detailed row-by-row predictions |
-| `/predict/json` | POST | JSON input prediction |
+| Endpoint          | Method | Description                     |
+| ----------------- | ------ | ------------------------------- |
+| `/`               | GET    | API information                 |
+| `/health`         | GET    | Health check                    |
+| `/model/info`     | GET    | Model metadata                  |
+| `/model/features` | GET    | Expected features               |
+| `/predict`        | POST   | Upload CSV for predictions      |
+| `/predict/batch`  | POST   | Detailed row-by-row predictions |
+| `/predict/json`   | POST   | JSON input prediction           |
 
 #### Example: Make Predictions
 
 **Using cURL:**
+
 ```bash
 curl -X POST "http://localhost:8000/predict" \
   -H "Content-Type: multipart/form-data" \
@@ -187,6 +218,7 @@ curl -X POST "http://localhost:8000/predict" \
 ```
 
 **Using Python:**
+
 ```python
 import requests
 
@@ -197,6 +229,7 @@ print(response.json())
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -221,6 +254,7 @@ For complete API documentation, see [`backend/API_DOCS.md`](backend/API_DOCS.md)
 ## 🧪 Models & Performance
 
 ### Available Models
+
 - **RandomForest** (Best Performance) ⭐
 - Gradient Boosting
 - Support Vector Machine (SVM)
@@ -230,19 +264,23 @@ For complete API documentation, see [`backend/API_DOCS.md`](backend/API_DOCS.md)
 - Naive Bayes (Classification only)
 
 ### Model Selection
+
 The backend automatically loads the **RandomForest** model, which achieved the best accuracy during training. All trained models are saved in the `models/` directory with timestamps.
 
 ## 📊 Dataset
 
 ### Source
+
 NASA Exoplanet Archive - Kepler Objects of Interest (KOI) dataset
 
 ### Features
+
 - **24 features** including orbital parameters, stellar properties, and observational data
 - **Target classes**: CANDIDATE, CONFIRMED, FALSE POSITIVE
 - **Preprocessing**: Automated handling of numeric and categorical features
 
 ### Data Location
+
 ```
 data/merged_all_missions.csv  # Main dataset
 data/raw/                     # Raw data storage
@@ -251,13 +289,17 @@ data/raw/                     # Raw data storage
 ## 🔧 Configuration
 
 ### Backend Configuration
-Edit `backend/main.py` to configure:
+
+Edit `backend/app/main.py` to configure:
+
 - Port number (default: 8000)
 - CORS origins (for production)
 - Model selection
 
 ### Model Configuration
+
 Edit `src/training_v3.py` to adjust:
+
 - Model hyperparameters
 - Train/test split ratio
 - Feature engineering
@@ -268,23 +310,26 @@ Edit `src/training_v3.py` to adjust:
 ### Production Deployment
 
 #### Using Gunicorn
+
 ```bash
 cd backend
 gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000
 ```
 
 #### Using Docker
+
 ```dockerfile
 FROM python:3.10-slim
 WORKDIR /app
-COPY backend/requirements.txt .
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-COPY backend/ .
-COPY models/ ../models/
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+COPY backend/ ./backend/
+COPY models/ ./models/
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
 Build and run:
+
 ```bash
 docker build -t north-star-api .
 docker run -p 8000:8000 north-star-api
@@ -293,6 +338,7 @@ docker run -p 8000:8000 north-star-api
 ## 🤝 Contributing
 
 Contributions are welcome! Please follow these steps:
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes

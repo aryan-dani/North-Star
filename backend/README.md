@@ -1,163 +1,186 @@
 # Backend - Exoplanet Classification API
 
-FastAPI-based REST API for real-time exoplanet classification using trained machine learning models.
+FastAPI-powered REST API for exoplanet classification using machine learning.
 
 ## 🚀 Quick Start
 
-### Start the Server
+### Prerequisites
+- Python 3.10 or higher
+- Trained model file in `../models/` directory
 
-**Windows PowerShell:**
+### Installation
+
+1. Navigate to the backend directory:
 ```powershell
-.\start_server.ps1
+cd backend
 ```
 
-**Linux/Mac:**
-```bash
-chmod +x start_server.sh
-./start_server.sh
+2. Install dependencies (from project root):
+```powershell
+pip install -r ../requirements.txt
 ```
 
-**Or manually:**
-```bash
-pip install -r requirements.txt
+3. Start the server:
+```powershell
 python main.py
 ```
 
-The server will start at **http://localhost:8000**
+The API will be available at: **http://localhost:8000**
 
-## 📚 Documentation
+### Interactive Documentation
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
 
-- **Interactive API Docs**: http://localhost:8000/docs
-- **Alternative Docs**: http://localhost:8000/redoc
-- **Complete API Reference**: [API_DOCS.md](API_DOCS.md)
-
-## 🏗️ Architecture
+## 📁 Project Structure
 
 ```
 backend/
-├── main.py              # FastAPI application with endpoints
-├── model_utils.py       # Model loading and prediction logic
-├── requirements.txt     # Python dependencies
-├── API_DOCS.md         # Complete API documentation
-├── start_server.ps1    # Windows startup script
-└── start_server.sh     # Linux/Mac startup script
+├── app/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI application
+│   ├── api/
+│   │   ├── __init__.py
+│   │   └── routes.py        # API endpoints
+│   └── services/
+│       ├── model_service.py     # ML predictions
+│       └── analytics_service.py # Analytics & plots
+├── main.py                  # Server entry point
+├── examples.py              # Usage examples
+├── test_api.py              # API tests
+└── API_DOCS.md              # Complete API documentation
 ```
 
-## 🔌 Key Features
+## 🔌 API Endpoints
 
-✅ **Multiple Endpoints**
-- File upload (CSV)
-- JSON input
-- Batch predictions
-- Model information
+### Core Endpoints
+- `GET /` - API information
+- `GET /health` - Health check
+- `GET /model/info` - Model metadata
+- `GET /model/metrics` - Performance metrics
+- `GET /model/features` - Feature details
 
-✅ **Production Ready**
-- Error handling
-- CORS support
-- Request validation
-- Automatic documentation
+### Prediction Endpoints
+- `POST /predict` - Upload CSV for predictions
+- `POST /predict/batch` - Detailed row-by-row predictions
+- `POST /predict/json` - JSON input prediction
 
-✅ **High Performance**
-- Async operations
-- Efficient preprocessing
-- Cached model loading
+### Analytics Endpoints
+- `POST /analytics` - Generate comprehensive analytics
+- `POST /analytics/statistics` - Statistics only (faster)
+- `GET /analytics/plots/types` - Available plot types
 
-## 📝 API Endpoints
+## 📊 Services
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | API information |
-| `/health` | GET | Health check |
-| `/model/info` | GET | Model metadata |
-| `/model/features` | GET | Expected features |
-| `/model/metrics` | GET | Model performance |
-| `/predict` | POST | Upload CSV for predictions |
-| `/predict/batch` | POST | Detailed predictions |
-| `/predict/json` | POST | JSON input prediction |
-| `/analytics` | POST | Full analytics with plots |
-| `/analytics/statistics` | POST | Statistics only (faster) |
-| `/analytics/plots/types` | GET | Available plot types |
+### Model Service
+Located in `app/services/model_service.py`
 
-## 💡 Usage Examples
+**Features:**
+- Load trained models dynamically
+- Make predictions on single samples or batches
+- Support for CSV and JSON input
+- Confidence scoring
+- Probability distributions
 
-### Upload CSV File
+**Key Functions:**
+```python
+load_model(model_path: str) -> tuple
+predict(data: pd.DataFrame) -> tuple
+predict_proba(data: pd.DataFrame) -> np.ndarray
+get_model_info() -> dict
+```
 
+### Analytics Service
+Located in `app/services/analytics_service.py`
+
+**Features:**
+- Generate comprehensive statistics
+- Create 7+ visualization types
+- ROC curves and confusion matrices
+- Feature importance rankings
+- Performance metrics calculation
+
+**Available Plots:**
+1. Class Distribution - Bar chart of predictions
+2. Confusion Matrix - Heatmap (requires ground truth)
+3. Confidence Distribution - Histogram & box plot
+4. Probability Heatmap - Probability distributions
+5. ROC Curves - Multi-class ROC (requires ground truth)
+6. Feature Importance - Rankings (if supported)
+7. Class Probability Comparison - Violin plots
+
+**Key Functions:**
+```python
+calculate_statistics(predictions, probabilities, y_true=None) -> dict
+generate_complete_analytics(df, predictions, probabilities, y_true=None) -> dict
+```
+
+## 🧪 Testing
+
+### Run API Tests
+```powershell
+python test_api.py
+```
+
+### Manual Testing with cURL
+
+#### Health Check
+```bash
+curl http://localhost:8000/health
+```
+
+#### Upload CSV for Prediction
 ```bash
 curl -X POST "http://localhost:8000/predict" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@test_data.csv"
+  -F "file=@../data/test_data.csv"
 ```
 
-### Python Client
+#### JSON Prediction
+```bash
+curl -X POST "http://localhost:8000/predict/json" \
+  -H "Content-Type: application/json" \
+  -d '{"data": {"koi_period": 9.488, "koi_duration": 2.9575, ...}}'
+```
 
+### Testing with Python
 ```python
 import requests
 
-# Upload file
-url = "http://localhost:8000/predict"
-files = {"file": open("test_data.csv", "rb")}
-response = requests.post(url, files=files)
+# Health check
+response = requests.get("http://localhost:8000/health")
 print(response.json())
 
-# JSON prediction
-url = "http://localhost:8000/predict/json"
-data = {
-    "data": {
-        "koi_period": 9.488,
-        "koi_duration": 2.957,
-        # ... other features
-    }
-}
-response = requests.post(url, json=data)
+# Predict from CSV
+files = {"file": open("../data/test_data.csv", "rb")}
+response = requests.post("http://localhost:8000/predict", files=files)
 print(response.json())
-
-# Get analytics with plots
-url = "http://localhost:8000/analytics"
-files = {"file": open("test_data.csv", "rb")}
-response = requests.post(url, files=files)
-analytics = response.json()['analytics']
-
-# Access statistics
-stats = analytics['statistics']
-print(f"Accuracy: {stats['performance_metrics']['accuracy']}")
-
-# Save plots
-import base64
-for plot_name, plot_base64 in analytics['plots'].items():
-    img_data = base64.b64decode(plot_base64)
-    with open(f"{plot_name}.png", "wb") as f:
-        f.write(img_data)
 ```
 
-### JavaScript/TypeScript
+## 📝 Examples
 
-```javascript
-// File upload
-const formData = new FormData();
-formData.append('file', fileInput.files[0]);
-
-fetch('http://localhost:8000/predict', {
-  method: 'POST',
-  body: formData
-})
-  .then(res => res.json())
-  .then(data => console.log(data));
+See `examples.py` for complete usage examples:
+```powershell
+python examples.py
 ```
 
 ## 🔧 Configuration
 
 ### Port Configuration
-Edit `main.py`:
+Edit `main.py` to change the port:
 ```python
-uvicorn.run("main:app", host="0.0.0.0", port=8000)
+uvicorn.run(
+    "app.main:app",
+    host="0.0.0.0",
+    port=8000,  # Change port here
+    reload=True
+)
 ```
 
 ### CORS Configuration
-Edit `main.py`:
+Edit `app/main.py` to configure CORS:
 ```python
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Your frontend URL
+    allow_origins=["*"],  # Change for production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -165,135 +188,101 @@ app.add_middleware(
 ```
 
 ### Model Selection
-The service automatically loads the RandomForest model. To use a different model, edit `model_utils.py`:
+The API automatically loads the latest RandomForest model. To use a different model, edit `app/services/model_service.py`:
 ```python
-# Look for specific model
-model_files = list(models_dir.glob("GradientBoosting_*.joblib"))
+# Find and modify the model pattern
+model_files = glob.glob(str(models_dir / "RandomForest*.joblib"))
+# Change to: "GradientBoosting*.joblib", "SVM*.joblib", etc.
 ```
 
-## 📦 Dependencies
+## 🚀 Deployment
 
-- **fastapi**: Web framework
-- **uvicorn**: ASGI server
-- **pandas**: Data manipulation
-- **scikit-learn**: ML model support
-- **joblib**: Model serialization
-- **python-multipart**: File upload support
+### Development
+```powershell
+python main.py
+```
 
-## 🚀 Production Deployment
-
-### Using Gunicorn
-
+### Production with Gunicorn
 ```bash
-gunicorn main:app \
-  -w 4 \
-  -k uvicorn.workers.UvicornWorker \
-  -b 0.0.0.0:8000
+gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000
 ```
 
-### Using Docker
-
+### Docker Deployment
 ```dockerfile
 FROM python:3.10-slim
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+COPY backend/ ./backend/
+COPY models/ ./models/
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-### Environment Variables
-
-For production, consider using environment variables:
-```python
-import os
-
-PORT = int(os.getenv("PORT", 8000))
-DEBUG = os.getenv("DEBUG", "False") == "True"
-```
-
-## 🔒 Security Considerations
-
-For production deployment:
-
-1. **Enable HTTPS**: Use reverse proxy (nginx/traefik)
-2. **Add Authentication**: Implement API keys or OAuth2
-3. **Rate Limiting**: Prevent abuse
-4. **CORS**: Restrict allowed origins
-5. **Input Validation**: Already implemented with Pydantic
-
-## 🧪 Testing
-
-Test the API endpoints:
-
+Build and run:
 ```bash
-# Health check
-curl http://localhost:8000/health
-
-# Model info
-curl http://localhost:8000/model/info
-
-# Upload test file
-curl -X POST http://localhost:8000/predict \
-  -F "file=@../data/merged_all_missions.csv"
+docker build -t exoplanet-api .
+docker run -p 8000:8000 exoplanet-api
 ```
 
-## 📊 Response Format
+## 📚 Dependencies
 
-### Success Response
-```json
-{
-  "status": "success",
-  "predictions": ["CONFIRMED", "CANDIDATE"],
-  "probabilities": [[0.05, 0.92, 0.03], [0.15, 0.75, 0.10]],
-  "metrics": {
-    "total_predictions": 2,
-    "class_distribution": {
-      "CONFIRMED": 1,
-      "CANDIDATE": 1
-    },
-    "average_confidence": 0.835
-  },
-  "timestamp": "2025-10-05T13:45:30.123456"
-}
-```
-
-### Error Response
-```json
-{
-  "detail": "File must be a CSV"
-}
-```
+Core dependencies (from `../requirements.txt`):
+- **fastapi** - Web framework
+- **uvicorn** - ASGI server
+- **pandas** - Data manipulation
+- **scikit-learn** - Machine learning
+- **joblib** - Model serialization
+- **matplotlib** - Plotting
+- **seaborn** - Statistical visualization
+- **python-multipart** - File uploads
 
 ## 🐛 Troubleshooting
 
 ### Model Not Found
 ```
-Error: No model file found in models directory
+FileNotFoundError: No model files found
 ```
-**Solution**: Train models first using `cd ../src && python training_v3.py`
+**Solution**: Train a model first:
+```powershell
+cd ../src
+python training_v3.py
+```
 
 ### Port Already in Use
 ```
-Error: [Errno 48] Address already in use
+OSError: [Errno 48] Address already in use
 ```
-**Solution**: Change port in `main.py` or kill the process using port 8000
-
-### Import Errors
+**Solution**: Change port in `main.py` or kill the process:
+```powershell
+# Find process on port 8000
+netstat -ano | findstr :8000
+# Kill process (replace PID)
+taskkill /PID <PID> /F
 ```
-ModuleNotFoundError: No module named 'fastapi'
-```
-**Solution**: Install dependencies: `pip install -r requirements.txt`
 
-## 📖 Additional Resources
+### CORS Errors
+**Solution**: Update CORS settings in `app/main.py` to include your frontend origin.
 
-- [Complete API Documentation](API_DOCS.md)
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [Main Project README](../README.md)
+## 📖 Documentation
 
-## 🤝 Support
+- **API_DOCS.md** - Complete API reference with examples
+- **Project README** - Main project documentation (`../README.md`)
+- **Swagger UI** - Interactive API documentation (http://localhost:8000/docs)
 
-For issues or questions:
-1. Check the [API Documentation](API_DOCS.md)
-2. Review server logs for error details
-3. Test endpoints using Swagger UI at `/docs`
+## 🤝 Contributing
+
+When adding new endpoints:
+1. Add route in `app/api/routes.py`
+2. Implement logic in appropriate service
+3. Update `API_DOCS.md` with new endpoint
+4. Add tests in `test_api.py`
+5. Update this README
+
+## 📄 License
+
+MIT License - See `../LICENSE` file for details
+
+---
+
+**Last Updated**: October 5, 2025  
+**Version**: 1.0.0

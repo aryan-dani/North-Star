@@ -4,29 +4,69 @@ __pycache__/
 *.pyo
 *.pyd
 *.so
+*.egg-info/
+dist/
+build/
 
 # Environments
 .venv/
 .env
 env/
 venv/
+ENV/
 
 # Logs and dumps
 *.log
 *.tmp
 *.bak
 
-# Data
+# Data files
 data/raw/*
 !data/raw/.gitkeep
 
 # Jupyter
 .ipynb_checkpoints/
+*.ipynb_checkpoints
 
 # IDE metadata
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
 # Model artifacts
 models/*
 !models/.gitkeep
+
+# Node.js / Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Frontend build artifacts
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+
+# OS specific
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# Output files (keep structure, ignore content)
+output/*.png
+output/*.csv
+output/*.json
+!output/.gitkeep
+
