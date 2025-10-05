@@ -99,11 +99,12 @@ const TrainingStudio: React.FC = () => {
       const response = await api.get(
         `/training/hyperparameters/${selectedModel}`
       );
-      setHyperparameters(response.data.hyperparameters);
+      const safeHyperparams = response.data.hyperparameters ?? {};
+      setHyperparameters(safeHyperparams);
 
       // Initialize param values with defaults
       const defaults: { [key: string]: any } = {};
-      Object.entries(response.data.hyperparameters).forEach(
+      Object.entries(safeHyperparams).forEach(
         ([key, info]: [string, any]) => {
           defaults[key] = info.default;
         }
@@ -413,7 +414,7 @@ const TrainingStudio: React.FC = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                   <Stack spacing={2}>
-                    {Object.entries(hyperparameters).map(
+                    {Object.entries(hyperparameters ?? {}).map(
                       ([param, info]: [string, any]) => (
                         <Box key={param}>
                           {info.type === "int" || info.type === "float" ? (
