@@ -46,13 +46,26 @@ const Models = () => {
   const fetchModels = async () => {
     try {
       setLoading(true);
+      console.log("🔍 Fetching models from /models/available...");
       const response = await apiClient.get<ModelsResponse>("/models/available");
-      setModels(response.data.models);
-      setCurrentModel(response.data.current_model);
+      console.log("✅ Response received:", response.data);
+      console.log("📊 Models array:", response.data?.models);
+      console.log("🎯 Current model:", response.data?.current_model);
+      
+      // Defensive checks for undefined/null data
+      const modelsArray = Array.isArray(response.data?.models) ? response.data.models : [];
+      console.log("📋 Setting models state:", modelsArray);
+      setModels(modelsArray);
+      setCurrentModel(response.data?.current_model || "No model loaded");
       setError(null);
+      console.log("✅ State updated successfully");
     } catch (err: any) {
+      console.error("❌ Error fetching models:", err);
       setError(err.response?.data?.detail || "Failed to fetch models");
       console.error("Error fetching models:", err);
+      // Set safe defaults on error
+      setModels([]);
+      setCurrentModel("No model loaded");
     } finally {
       setLoading(false);
     }
@@ -79,7 +92,13 @@ const Models = () => {
   };
 
   const formatDate = (isoString: string) => {
-    return new Date(isoString).toLocaleString();
+    try {
+      if (!isoString) return "N/A";
+      const date = new Date(isoString);
+      return isNaN(date.getTime()) ? "Invalid date" : date.toLocaleString();
+    } catch {
+      return "N/A";
+    }
   };
 
   const getModelDescription = (name: string) => {
@@ -143,13 +162,13 @@ const Models = () => {
               </Box>
               <Box>
                 <Chip
-                  label={currentModel}
-                  color="success"
+                  label={currentModel || "No model loaded"}
+                  color={currentModel && currentModel !== "No model loaded" ? "success" : "default"}
                   sx={{ fontSize: "1.1rem", py: 2.5, px: 1 }}
                 />
               </Box>
               <Typography variant="body2" color="text.secondary">
-                {getModelDescription(currentModel)}
+                {currentModel ? getModelDescription(currentModel) : "No active model"}
               </Typography>
             </Stack>
           </CardContent>
@@ -159,7 +178,7 @@ const Models = () => {
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Available Models ({models?.length || 0})
+              Available Models ({models?.length ?? 0})
             </Typography>
             <TableContainer component={Paper} sx={{ mt: 2 }}>
               <Table>
