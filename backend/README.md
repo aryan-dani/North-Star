@@ -74,6 +74,9 @@ backend/
 | `/predict` | POST | Upload CSV for predictions |
 | `/predict/batch` | POST | Detailed predictions |
 | `/predict/json` | POST | JSON input prediction |
+| `/analytics` | POST | Full analytics with plots |
+| `/analytics/statistics` | POST | Statistics only (faster) |
+| `/analytics/plots/types` | GET | Available plot types |
 
 ## 💡 Usage Examples
 
@@ -107,6 +110,23 @@ data = {
 }
 response = requests.post(url, json=data)
 print(response.json())
+
+# Get analytics with plots
+url = "http://localhost:8000/analytics"
+files = {"file": open("test_data.csv", "rb")}
+response = requests.post(url, files=files)
+analytics = response.json()['analytics']
+
+# Access statistics
+stats = analytics['statistics']
+print(f"Accuracy: {stats['performance_metrics']['accuracy']}")
+
+# Save plots
+import base64
+for plot_name, plot_base64 in analytics['plots'].items():
+    img_data = base64.b64decode(plot_base64)
+    with open(f"{plot_name}.png", "wb") as f:
+        f.write(img_data)
 ```
 
 ### JavaScript/TypeScript

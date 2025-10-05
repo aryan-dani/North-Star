@@ -327,6 +327,164 @@ Make predictions using JSON input.
 
 ---
 
+### 9. Analytics - Full Report
+
+**POST** `/analytics`
+
+Generate comprehensive analytics including statistics and visualizations.
+
+**Request:**
+- **Content-Type**: `multipart/form-data`
+- **Body**: CSV file (optionally with target column for performance metrics)
+
+**Response:**
+```json
+{
+  "status": "success",
+  "filename": "test_data.csv",
+  "analytics": {
+    "statistics": {
+      "total_predictions": 100,
+      "unique_classes": 3,
+      "class_distribution": { ... },
+      "confidence_statistics": {
+        "mean": 0.8523,
+        "std": 0.1234,
+        "min": 0.5012,
+        "max": 0.9876,
+        "median": 0.8701,
+        "q1": 0.7234,
+        "q3": 0.9123
+      },
+      "confidence_ranges": {
+        "high (>= 0.8)": { "count": 75, "percentage": 75.0 },
+        "medium (0.6-0.8)": { "count": 20, "percentage": 20.0 },
+        "low (< 0.6)": { "count": 5, "percentage": 5.0 }
+      },
+      "performance_metrics": {
+        "accuracy": 0.9200,
+        "precision_macro": 0.9150,
+        "recall_macro": 0.9100,
+        "f1_macro": 0.9125
+      },
+      "per_class_metrics": {
+        "CONFIRMED": {
+          "precision": 0.95,
+          "recall": 0.92,
+          "f1-score": 0.93,
+          "support": 45
+        }
+      }
+    },
+    "plots": {
+      "class_distribution": "base64_encoded_png...",
+      "confusion_matrix": "base64_encoded_png...",
+      "confidence_distribution": "base64_encoded_png...",
+      "probability_heatmap": "base64_encoded_png...",
+      "roc_curves": "base64_encoded_png...",
+      "feature_importance": "base64_encoded_png...",
+      "class_probability_comparison": "base64_encoded_png..."
+    },
+    "summary": {
+      "total_samples": 100,
+      "predictions_generated": 100,
+      "plots_generated": 7,
+      "has_ground_truth": true,
+      "model_name": "RandomForest"
+    }
+  },
+  "timestamp": "2025-10-05T13:45:30.123456"
+}
+```
+
+**Note**: Plots are returned as base64-encoded PNG images that can be directly displayed in HTML:
+```html
+<img src="data:image/png;base64,{plot_base64}" alt="Plot" />
+```
+
+---
+
+### 10. Analytics - Statistics Only
+
+**POST** `/analytics/statistics`
+
+Get statistics without generating plots (faster response).
+
+**Request:**
+- **Content-Type**: `multipart/form-data`
+- **Body**: CSV file
+
+**Response:**
+```json
+{
+  "status": "success",
+  "filename": "test_data.csv",
+  "statistics": {
+    "total_predictions": 100,
+    "class_distribution": { ... },
+    "confidence_statistics": { ... },
+    "confidence_ranges": { ... },
+    "performance_metrics": { ... }
+  },
+  "total_samples": 100,
+  "timestamp": "2025-10-05T13:45:30.123456"
+}
+```
+
+---
+
+### 11. Available Plot Types
+
+**GET** `/analytics/plots/types`
+
+Get information about available visualization types.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "available_plots": [
+    {
+      "name": "class_distribution",
+      "description": "Bar chart showing distribution of predicted classes",
+      "requires_ground_truth": false
+    },
+    {
+      "name": "confusion_matrix",
+      "description": "Confusion matrix heatmap",
+      "requires_ground_truth": true
+    },
+    {
+      "name": "confidence_distribution",
+      "description": "Histogram and box plot of prediction confidence scores",
+      "requires_ground_truth": false
+    },
+    {
+      "name": "probability_heatmap",
+      "description": "Heatmap showing probability distributions",
+      "requires_ground_truth": false
+    },
+    {
+      "name": "roc_curves",
+      "description": "ROC curves for multi-class classification",
+      "requires_ground_truth": true
+    },
+    {
+      "name": "feature_importance",
+      "description": "Feature importance rankings (if supported by model)",
+      "requires_ground_truth": false
+    },
+    {
+      "name": "class_probability_comparison",
+      "description": "Violin plot comparing probability distributions",
+      "requires_ground_truth": false
+    }
+  ]
+}
+```
+
+---
+
 ## Request Examples
 
 ### Using cURL
@@ -371,6 +529,27 @@ curl -X POST "http://localhost:8000/predict/json" \
   }'
 ```
 
+#### 6. Full Analytics
+```bash
+curl -X POST "http://localhost:8000/analytics" \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@test_data.csv"
+```
+
+#### 7. Statistics Only
+```bash
+curl -X POST "http://localhost:8000/analytics/statistics" \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@test_data.csv"
+```
+
+#### 8. Get Plot Types
+```bash
+curl -X GET "http://localhost:8000/analytics/plots/types"
+```
+
 ---
 
 ### Using Python
@@ -407,6 +586,50 @@ data = {
 
 response = requests.post(url, json=data)
 print(response.json())
+```
+
+#### Example: Get Full Analytics
+```python
+import requests
+import base64
+
+url = "http://localhost:8000/analytics"
+files = {"file": open("test_data.csv", "rb")}
+
+response = requests.post(url, files=files)
+data = response.json()
+
+# Access statistics
+stats = data['analytics']['statistics']
+print(f"Total Predictions: {stats['total_predictions']}")
+print(f"Average Confidence: {stats['confidence_statistics']['mean']}")
+
+# Save plots
+plots = data['analytics']['plots']
+for plot_name, plot_base64 in plots.items():
+    img_data = base64.b64decode(plot_base64)
+    with open(f"{plot_name}.png", "wb") as f:
+        f.write(img_data)
+    print(f"Saved {plot_name}.png")
+```
+
+#### Example: Display Plots in Jupyter Notebook
+```python
+import requests
+import base64
+from IPython.display import Image, display
+
+url = "http://localhost:8000/analytics"
+files = {"file": open("test_data.csv", "rb")}
+
+response = requests.post(url, files=files)
+plots = response.json()['analytics']['plots']
+
+# Display each plot
+for plot_name, plot_base64 in plots.items():
+    print(f"\n{plot_name.upper().replace('_', ' ')}")
+    img_data = base64.b64decode(plot_base64)
+    display(Image(data=img_data))
 ```
 
 ---

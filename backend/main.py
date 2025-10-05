@@ -13,6 +13,7 @@ import json
 from datetime import datetime
 
 from model_utils import ModelService
+from analytics import AnalyticsService
 
 app = FastAPI(
     title="Exoplanet Classification API",
@@ -31,13 +32,17 @@ app.add_middleware(
 )
 
 model_service = ModelService()
+analytics_service = None
 
 @app.on_event("startup")
 async def startup_event():
     """Load model on startup"""
+    global analytics_service
     try:
         model_service.load_model()
+        analytics_service = AnalyticsService(model_service)
         print("✓ Model loaded successfully")
+        print("✓ Analytics service initialized")
     except Exception as e:
         print(f"✗ Error loading model: {e}")
         raise
@@ -55,6 +60,9 @@ async def root():
             "model_info": "/model/info",
             "predict": "/predict",
             "predict_batch": "/predict/batch",
+            "analytics": "/analytics",
+            "analytics_stats": "/analytics/statistics",
+            "plot_types": "/analytics/plots/types",
             "docs": "/docs"
         }
     }
@@ -171,6 +179,8 @@ async def predict_json(data: Dict[str, Any]):
             "timestamp": datetime.now().isoformat()
         })
         
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
 
@@ -198,6 +208,151 @@ async def get_metrics():
         })
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error retrieving metrics: {str(e)}")
+
+@app.post("/analytics")
+async def generate_analytics(file: UploadFile = File(...)):
+    """
+    Generate comprehensive analytics for uploaded CSV data
+    Returns statistics and base64-encoded plots for visualization
+    """
+    try:
+        if not file.filename.endswith('.csv'):
+            raise HTTPException(status_code=400, detail="File must be a CSV")
+        
+        
+        contents = await file.read()
+        df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
+        
+        
+        target_col = None
+        y_true = None
+        
+        
+        possible_targets = ['koi_disposition', 'target', 'label', 'class']
+        for col in possible_targets:
+            if col in df.columns:
+                target_col = col
+                y_true = df[col]
+                df = df.drop(columns=[col])
+                break
+        
+        
+        analytics_result = analytics_service.generate_complete_analytics(df, y_true)
+        
+        return JSONResponse(content={
+            "status": "success",
+            "filename": file.filename,
+            "analytics": analytics_result,
+            "timestamp": datetime.now().isoformat()
+        })
+        
+    except pd.errors.EmptyDataError:
+        raise HTTPException(status_code=400, detail="CSV file is empty")
+    except pd.errors.ParserError:
+        raise HTTPException(status_code=400, detail="Invalid CSV format")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Analytics generation error: {str(e)}")
+
+@app.post("/analytics/statistics")
+async def generate_statistics_only(file: UploadFile = File(...)):
+    """
+    Generate statistics only (no plots) for faster response
+    Useful for quick data overview
+    """
+    try:
+        if not file.filename.endswith('.csv'):
+            raise HTTPException(status_code=400, detail="File must be a CSV")
+        
+        
+        contents = await file.read()
+        df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
+        
+        
+        target_col = None
+        y_true = None
+        possible_targets = ['koi_disposition', 'target', 'label', 'class']
+        for col in possible_targets:
+            if col in df.columns:
+                target_col = col
+                y_true = df[col]
+                df = df.drop(columns=[col])
+                break
+        
+        
+        predictions = model_service.model.predict(df)
+        probabilities = None
+        
+        if hasattr(model_service.model, 'predict_proba'):
+            try:
+                probabilities = model_service.model.predict_proba(df)
+            except:
+                pass
+        
+        
+        statistics = analytics_service.calculate_statistics(
+            predictions,
+            probabilities,
+            y_true.values if y_true is not None else None
+        )
+        
+        return JSONResponse(content={
+            "status": "success",
+            "filename": file.filename,
+            "statistics": statistics,
+            "total_samples": len(df),
+            "timestamp": datetime.now().isoformat()
+        })
+        
+    except pd.errors.EmptyDataError:
+        raise HTTPException(status_code=400, detail="CSV file is empty")
+    except pd.errors.ParserError:
+        raise HTTPException(status_code=400, detail="Invalid CSV format")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Statistics generation error: {str(e)}")
+
+@app.get("/analytics/plots/types")
+async def get_available_plots():
+    """Get list of available plot types"""
+    return JSONResponse(content={
+        "status": "success",
+        "available_plots": [
+            {
+                "name": "class_distribution",
+                "description": "Bar chart showing distribution of predicted classes",
+                "requires_ground_truth": False
+            },
+            {
+                "name": "confusion_matrix",
+                "description": "Confusion matrix heatmap",
+                "requires_ground_truth": True
+            },
+            {
+                "name": "confidence_distribution",
+                "description": "Histogram and box plot of prediction confidence scores",
+                "requires_ground_truth": False
+            },
+            {
+                "name": "probability_heatmap",
+                "description": "Heatmap showing probability distributions",
+                "requires_ground_truth": False
+            },
+            {
+                "name": "roc_curves",
+                "description": "ROC curves for multi-class classification",
+                "requires_ground_truth": True
+            },
+            {
+                "name": "feature_importance",
+                "description": "Feature importance rankings (if supported by model)",
+                "requires_ground_truth": False
+            },
+            {
+                "name": "class_probability_comparison",
+                "description": "Violin plot comparing probability distributions",
+                "requires_ground_truth": False
+            }
+        ]
+    })
 
 @app.exception_handler(404)
 async def not_found_handler(request, exc):
