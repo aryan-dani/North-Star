@@ -39,6 +39,10 @@ data/raw/*
 models/*
 !models/.gitkeep
 
+# Single model folder artifacts
+single_model/*.csv
+single_model/*.joblib
+
 # Node.js / Frontend
 node_modules/
 npm-debug.log*

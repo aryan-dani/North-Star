@@ -118,22 +118,22 @@ artifacts = {"results_csv": results_csv}
 
 if task=="classification":
     from sklearn.metrics import confusion_matrix
-    pred = best_pipe.predict(X_test)
+    pred = best_pipe.predict(X_test)  # type: ignore
     cm = confusion_matrix(y_test, pred, labels=np.unique(y_test))
     fig = plt.figure(figsize=(6,6))
     plt.imshow(cm, interpolation="nearest")
     plt.title(f"Confusion Matrix: {best_name}")
-    plt.xticks(ticks=np.arange(len(np.unique(y_test))), labels=np.unique(y_test), rotation=45, ha="right")
-    plt.yticks(ticks=np.arange(len(np.unique(y_test))), labels=np.unique(y_test))
+    unique_labels = [str(label) for label in np.unique(y_test)]
+    plt.xticks(ticks=np.arange(len(unique_labels)), labels=unique_labels, rotation=45, ha="right")
+    plt.yticks(ticks=np.arange(len(unique_labels)), labels=unique_labels)
     plt.xlabel("Predicted")
     plt.ylabel("True")
     plt.tight_layout()
     cm_path = os.path.join(output_dir, "confusion_matrix.png")
     plt.savefig(cm_path, bbox_inches="tight"); plt.close(fig)
     print(f"Confusion matrix saved to: {cm_path}")
-    artifacts["confusion_matrix"] = cm_path
 else:
-    pred = best_pipe.predict(X_test)
+    pred = best_pipe.predict(X_test)  # type: ignore
     fig = plt.figure(figsize=(6,4))
     plt.scatter(range(len(y_test)), y_test - pred)
     plt.axhline(0)

@@ -117,6 +117,33 @@ class ModelService:
             if estimator and hasattr(estimator, "classes_"):
                 self.target_classes = list(estimator.classes_)
 
+    def _validate_and_align_features(self, data: pd.DataFrame) -> pd.DataFrame:
+        """Validate input data and align with expected features."""
+        if not self.feature_names:
+            # If no feature names extracted, return data as-is
+            return data
+
+        # Get the columns present in the data
+        data_columns = set(data.columns)
+        expected_columns = set(self.feature_names)
+
+        # Check for missing columns (columns that model expects but data doesn't have)
+        missing_cols = expected_columns - data_columns
+        if missing_cols:
+            raise ValueError(
+                f"Input data is missing required columns: {sorted(missing_cols)}"
+            )
+
+        # Select only the columns that the model expects (in the correct order)
+        # This also handles extra columns in the data that model doesn't need
+        try:
+            aligned_data = data[self.feature_names]
+            return aligned_data
+        except KeyError as e:
+            raise ValueError(
+                f"Error aligning features. Missing columns: {e}"
+            ) from e
+
     def is_loaded(self) -> bool:
         """Return True if a model is loaded."""
         return self.model is not None
@@ -158,6 +185,9 @@ class ModelService:
         if model is None:
             raise ValueError("Model not loaded. Call load_model() first.")
 
+        # Validate and align input data with expected features
+        data = self._validate_and_align_features(data)
+
         predictions = model.predict(data)
         probabilities = None
         confidence = None
@@ -186,6 +216,9 @@ class ModelService:
         model = self.model
         if model is None:
             raise ValueError("Model not loaded. Call load_model() first.")
+
+        # Validate and align input data with expected features
+        data = self._validate_and_align_features(data)
 
         predictions = model.predict(data)
         probabilities = None
