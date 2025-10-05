@@ -4,16 +4,11 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  
+  // Development server configuration
   server: {
-    allowedHosts: ['.localhost', 'north-star.ramkansal.com'],
-    host: '0.0.0.0', // Listen on all network interfaces
+    host: 'localhost', // For local development only
     port: 5173,
-    strictPort: false,
-    cors: true, // Enable CORS for dev server
-    hmr: {
-      protocol: 'ws',
-      host: 'localhost', // Use localhost for HMR in development
-    },
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
@@ -22,6 +17,22 @@ export default defineConfig({
       },
     },
   },
-  // For production build
+  
+  // Production build configuration
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          mui: ['@mui/material', '@mui/icons-material'],
+        },
+      },
+    },
+  },
+  
   base: '/',
 })
