@@ -1,14 +1,62 @@
 # North-Star: Exoplanet Candidate Classification
 
-🏆 **NASA Space Apps Challenge 2025 Submission**
+🏆 **NASA Space Apps Challenge 2025 Submission**  
+🌟 **Challenge**: "A World Away: Hunting for Exoplanets with AI"
 
-North-Star is a complete full-stack machine learning web application for identifying and classifying exoplanet candidates from the NASA Kepler catalog. The project includes:
+North-Star is a comprehensive full-stack machine learning web application for identifying and classifying exoplanet candidates from the NASA Kepler catalog. Developed for the NASA Space Apps Challenge 2025, this project demonstrates the power of AI in astronomical discovery.
 
-- **Multiple ML Models**: 7 trained models including Random Forest (76% accuracy)
-- **REST API Backend**: FastAPI-powered service with 11+ endpoints
-- **Modern Frontend**: React + TypeScript with Material-UI
-- **Comprehensive Analytics**: 7+ visualization types with detailed metrics
-- **Production-Ready**: Fully documented with deployment guides
+## ✨ Project Highlights
+
+- **🎯 76% Classification Accuracy**: Random Forest model trained on 24 features
+- **🌐 Full-Stack Web Application**: React + TypeScript frontend with FastAPI backend
+- **🤖 Multi-Model System**: 7 trained ML algorithms with easy model switching
+- **📊 Comprehensive Analytics**: Confusion matrices, ROC curves, feature importance, and more
+- **⚡ Real-Time Training**: WebSocket-powered training studio with live progress tracking
+- **🎨 Modern UI**: Material-UI v7 with custom space-themed dark mode
+- **📚 Educational**: Extensive learning resources about exoplanets and machine learning
+
+## 🚀 Key Features
+
+### For Users
+
+- **Upload & Predict**: Batch prediction on CSV files or manual single predictions
+- **Interactive Analytics**: Generate 7+ visualization types with comprehensive metrics
+- **Model Comparison**: Switch between Random Forest, Gradient Boosting, SVM, and more
+- **Data Visualization**: Dynamic charts updating with your analytics data
+- **Learning Resources**: Comprehensive educational content about exoplanet science
+
+### For Developers
+
+- **REST API**: 11+ endpoints with automatic OpenAPI documentation
+- **WebSocket Support**: Real-time bidirectional communication for training updates
+- **Custom Training**: Train new models with your own data and hyperparameters
+- **Production-Ready**: Complete with error handling, logging, and validation
+
+## 🏗️ Technology Stack
+
+**Backend:**
+
+- Python 3.13 with FastAPI
+- scikit-learn for ML models
+- pandas & NumPy for data processing
+- WebSockets for real-time updates
+
+**Frontend:**
+
+- React 19 with TypeScript
+- Material-UI v7 components
+- Vite for fast development
+- Axios for API calls
+
+**Machine Learning:**
+
+- Random Forest (76% accuracy)
+- Gradient Boosting
+- Support Vector Machine
+- Decision Tree
+- Logistic Regression
+- K-Nearest Neighbors
+- Naive Bayes
 
 ## 🚀 Quick Start
 
@@ -53,6 +101,65 @@ python training_v3.py
 - **[backend/README.md](backend/README.md)** - Backend setup and API details
 - **[backend/API_DOCS.md](backend/API_DOCS.md)** - Complete API reference
 - **[frontend/README.md](frontend/README.md)** - Frontend setup and usage
+
+## 📁 Repository Layout
+
+```
+North-Star/
+├── frontend/              # React + TypeScript web interface
+│   ├── src/
+│   │   ├── components/   # UI components (Header, Sidebar, Layout)
+│   │   ├── pages/        # 8 pages: Dashboard, Predict, Analytics, etc.
+│   │   ├── services/     # API integration & analytics store
+│   │   └── theme/        # Material-UI space theme
+│   └── README.md
+├── backend/              # FastAPI REST API backend
+│   ├── app/
+│   │   ├── main.py      # FastAPI application
+│   │   ├── api/         # API routes with WebSocket support
+│   │   └── services/    # Model, analytics, training, WebSocket services
+│   ├── main.py          # Server entry point
+│   ├── API_DOCS.md      # Complete API documentation
+│   └── README.md
+├── src/                 # Training scripts
+│   ├── training_v3.py   # Multi-model pipeline ⭐
+│   ├── training_v2.py   # Enhanced training
+│   └── train_model.py   # Basic training
+├── models/              # Trained model artifacts (.joblib files)
+├── data/                # Dataset storage
+│   ├── merged_all_missions.csv
+│   └── raw/
+├── output/              # Training results and visualizations
+├── docs/                # Documentation & reference papers
+├── requirements.txt     # Python dependencies
+├── PROJECT_OVERVIEW.md  # Comprehensive project documentation
+└── README.md            # This file
+```
+
+## 🎯 NASA Space Apps Challenge 2025
+
+### The Challenge
+
+"A World Away: Hunting for Exoplanets with AI" challenges participants to develop AI/ML solutions for analyzing data from space missions like NASA's Kepler, TESS, and others to identify and classify exoplanet candidates.
+
+### Our Solution: North Star
+
+We created a complete end-to-end system that:
+
+1. **Processes Real NASA Data**: Uses actual Kepler mission data with 24 features
+2. **Multi-Model Approach**: Trains and compares 7 different ML algorithms
+3. **Interactive Web Platform**: User-friendly interface for predictions and analysis
+4. **Educational Focus**: Comprehensive learning resources about exoplanet science
+5. **Production-Ready**: Fully documented API with WebSocket support for real-time updates
+
+### Impact & Innovation
+
+- **Scalable**: Can process millions of candidates faster than manual analysis
+- **Accessible**: Web-based interface makes exoplanet research available to everyone
+- **Educational**: Helps students and enthusiasts understand both astronomy and ML
+- **Open Source**: Fully documented for reproduction and further development
+
+Learn more about the challenge: [NASA Space Apps Challenge](https://www.spaceappschallenge.org/2025/challenges/a-world-away-hunting-for-exoplanets-with-ai/)
 
 ## 📁 Repository Layout
 

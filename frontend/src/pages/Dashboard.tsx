@@ -340,14 +340,36 @@ const Dashboard = () => {
           }}
         >
           <CardContent>
-            <Typography variant="h5" gutterBottom fontWeight={600}>
-              Welcome to North Star 🌟
-            </Typography>
+            <Box display="flex" alignItems="center" gap={2} mb={2}>
+              <Typography
+                variant="h5"
+                gutterBottom
+                fontWeight={600}
+                sx={{ mb: 0 }}
+              >
+                Welcome to North Star 🌟
+              </Typography>
+              <Chip
+                label="NASA Space Apps 2025"
+                color="warning"
+                size="small"
+                sx={{ fontWeight: 600 }}
+              />
+            </Box>
             <Typography variant="body1" paragraph>
               This application uses machine learning to analyze exoplanet data
               from NASA's Kepler mission and predict whether celestial objects
               are confirmed exoplanets, candidates, or false positives.
             </Typography>
+            <Alert severity="info" sx={{ mb: 2 }}>
+              <Typography variant="body2">
+                <strong>🏆 NASA Space Apps Challenge 2025 Submission</strong>
+                <br />
+                "A World Away: Hunting for Exoplanets with AI" - A complete ML
+                platform for exoplanet discovery with 7 trained models,
+                real-time training, and comprehensive analytics.
+              </Typography>
+            </Alert>
             <Typography variant="body2" color="text.secondary" paragraph>
               Our RandomForest model analyzes 24 different features including
               orbital parameters, transit characteristics, and stellar
@@ -372,6 +394,13 @@ const Dashboard = () => {
                 label="🤖 Switch Models"
                 clickable
                 onClick={() => (window.location.href = "/models")}
+                sx={{ px: 1 }}
+              />
+              <Chip
+                label="🎓 Train Custom Model"
+                clickable
+                color="success"
+                onClick={() => (window.location.href = "/training")}
                 sx={{ px: 1 }}
               />
               <Chip

@@ -342,15 +342,19 @@ class TrainingService:
 
             # Progress: 50%
             await send_progress(50, "training", "Training model... This may take a few minutes.")
+            await asyncio.sleep(0.5)
 
             # Train model
             pipeline = Pipeline([("pre", preprocessor), ("model", model)])
             await send_progress(60, "training", "Fitting model to training data...")
+            await asyncio.sleep(0.5)
             pipeline.fit(X_train, y_train)
             await send_progress(70, "training", "Model training complete!")
+            await asyncio.sleep(0.5)
 
             # Progress: 80%
             await send_progress(80, "evaluation", "Evaluating model performance...")
+            await asyncio.sleep(0.5)
 
             # Evaluate
             y_pred = pipeline.predict(X_test)
@@ -370,6 +374,7 @@ class TrainingService:
                 "recall": round(float(recall), 4),
             }
             await send_progress(90, "saving", f"Saving model (Accuracy: {metrics['accuracy']:.2%})...", metrics)
+            await asyncio.sleep(0.5)
 
             # Save model
             model_filename = f"{model_name}_classification_{training_id}.joblib"
@@ -409,6 +414,7 @@ class TrainingService:
 
             # Progress: 100%
             await send_progress(100, "complete", "Training complete!", metrics)
+            await asyncio.sleep(0.5)
 
             # Add to history
             self.training_history.append(metadata)

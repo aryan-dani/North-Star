@@ -13,6 +13,7 @@ from fastapi import (
     APIRouter,
     Depends,
     File,
+    Form,
     HTTPException,
     Request,
     UploadFile,
@@ -449,14 +450,16 @@ async def validate_training_data(
 async def train_new_model(
     request: Request,
     file: UploadFile = File(...),
-    model_name: str = "RandomForest",
-    target_column: str = "koi_disposition",
-    test_size: float = 0.2,
-    session_id: str | None = None,
+    model_name: str = Form("RandomForest"),
+    target_column: str = Form("koi_disposition"),
+    test_size: float = Form(0.2),
+    session_id: str | None = Form(None),
     training_service: TrainingService = Depends(get_training_service)
 ) -> JSONResponse:
     """Train a new model with uploaded data."""
     try:
+        logger.info(f"Training request received - Model: {model_name}, Target: {target_column}, Test Size: {test_size}")
+        
         if file.filename is None or not file.filename.endswith(".csv"):
             raise HTTPException(status_code=400, detail="File must be a CSV")
         
