@@ -16,6 +16,7 @@ import {
   ModelTraining as ModelTrainingIcon,
   School as SchoolIcon,
   Science as ScienceIcon,
+  BarChart as BarChartIcon,
 } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
 
@@ -25,6 +26,7 @@ const navItems = [
   { text: "Dashboard", path: "/", icon: DashboardIcon },
   { text: "Predict", path: "/predict", icon: PredictIcon },
   { text: "Analytics", path: "/analytics", icon: AnalyticsIcon },
+  { text: "Visualization", path: "/visualization", icon: BarChartIcon },
   { text: "Models", path: "/models", icon: ModelTrainingIcon },
   { text: "Training Studio", path: "/training", icon: ScienceIcon },
   { text: "Model Info", path: "/model-info", icon: InfoIcon },

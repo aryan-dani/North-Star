@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from datetime import datetime
@@ -256,21 +257,25 @@ class TrainingService:
         hyperparameters: Dict[str, Any],
         test_size: float = 0.2,
         progress_callback=None,
+        session_id: str | None = None,
     ) -> Dict[str, Any]:
         """Train a model with specified hyperparameters."""
         training_id = datetime.now().strftime("%Y%m%d_%H%M%S")
         timestamp = datetime.now().isoformat()
 
+        # Helper function to send progress
+        async def send_progress(progress: int, stage: str, message: str, metrics: Dict[str, Any] | None = None):
+            progress_data = {"progress": progress, "stage": stage, "message": message}
+            if progress_callback:
+                await progress_callback(progress_data)
+            if session_id:
+                from .websocket_manager import manager as ws_manager
+                await ws_manager.send_training_progress(session_id, progress, stage, message, metrics)
+                await asyncio.sleep(0.3)  # Allow UI to update
+
         try:
             # Progress: 10%
-            if progress_callback:
-                await progress_callback(
-                    {
-                        "progress": 10,
-                        "stage": "preprocessing",
-                        "message": "Preparing data...",
-                    }
-                )
+            await send_progress(10, "preprocessing", "Preparing data...")
 
             # Prepare data
             y = data[target_column]
@@ -282,14 +287,7 @@ class TrainingService:
             y = y.loc[mask].reset_index(drop=True)
 
             # Progress: 20%
-            if progress_callback:
-                await progress_callback(
-                    {
-                        "progress": 20,
-                        "stage": "preprocessing",
-                        "message": "Splitting data...",
-                    }
-                )
+            await send_progress(20, "preprocessing", "Splitting data...")
 
             # Split data
             X_train, X_test, y_train, y_test = train_test_split(
@@ -303,14 +301,7 @@ class TrainingService:
             ]
 
             # Progress: 30%
-            if progress_callback:
-                await progress_callback(
-                    {
-                        "progress": 30,
-                        "stage": "preprocessing",
-                        "message": "Creating preprocessing pipeline...",
-                    }
-                )
+            await send_progress(30, "preprocessing", "Creating preprocessing pipeline...")
 
             # Create preprocessor
             preprocessor = ColumnTransformer(
@@ -344,41 +335,22 @@ class TrainingService:
             )
 
             # Progress: 40%
-            if progress_callback:
-                await progress_callback(
-                    {
-                        "progress": 40,
-                        "stage": "training",
-                        "message": f"Creating {model_name} model...",
-                    }
-                )
+            await send_progress(40, "training", f"Creating {model_name} model...")
 
             # Create model
             model = self.create_model(model_name, hyperparameters)
 
             # Progress: 50%
-            if progress_callback:
-                await progress_callback(
-                    {
-                        "progress": 50,
-                        "stage": "training",
-                        "message": "Training model...",
-                    }
-                )
+            await send_progress(50, "training", "Training model... This may take a few minutes.")
 
             # Train model
             pipeline = Pipeline([("pre", preprocessor), ("model", model)])
+            await send_progress(60, "training", "Fitting model to training data...")
             pipeline.fit(X_train, y_train)
+            await send_progress(70, "training", "Model training complete!")
 
             # Progress: 80%
-            if progress_callback:
-                await progress_callback(
-                    {
-                        "progress": 80,
-                        "stage": "evaluation",
-                        "message": "Evaluating model...",
-                    }
-                )
+            await send_progress(80, "evaluation", "Evaluating model performance...")
 
             # Evaluate
             y_pred = pipeline.predict(X_test)
@@ -391,14 +363,13 @@ class TrainingService:
             report = classification_report(y_test, y_pred, output_dict=True)
 
             # Progress: 90%
-            if progress_callback:
-                await progress_callback(
-                    {
-                        "progress": 90,
-                        "stage": "saving",
-                        "message": "Saving model...",
-                    }
-                )
+            metrics = {
+                "accuracy": round(float(accuracy), 4),
+                "f1_score": round(float(f1), 4),
+                "precision": round(float(precision), 4),
+                "recall": round(float(recall), 4),
+            }
+            await send_progress(90, "saving", f"Saving model (Accuracy: {metrics['accuracy']:.2%})...", metrics)
 
             # Save model
             model_filename = f"{model_name}_classification_{training_id}.joblib"
@@ -437,14 +408,7 @@ class TrainingService:
                 json.dump(metadata, f, indent=2)
 
             # Progress: 100%
-            if progress_callback:
-                await progress_callback(
-                    {
-                        "progress": 100,
-                        "stage": "complete",
-                        "message": "Training complete!",
-                    }
-                )
+            await send_progress(100, "complete", "Training complete!", metrics)
 
             # Add to history
             self.training_history.append(metadata)
@@ -459,14 +423,7 @@ class TrainingService:
 
         except Exception as e:
             logger.error(f"Training error: {e}", exc_info=True)
-            if progress_callback:
-                await progress_callback(
-                    {
-                        "progress": 0,
-                        "stage": "error",
-                        "message": f"Training failed: {str(e)}",
-                    }
-                )
+            await send_progress(0, "error", f"Training failed: {str(e)}")
             raise
 
     def get_training_history(self) -> List[Dict[str, Any]]:

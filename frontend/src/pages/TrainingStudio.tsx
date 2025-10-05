@@ -50,6 +50,12 @@ interface TrainingProgress {
   progress: number;
   stage: string;
   message: string;
+  metrics?: {
+    accuracy?: number;
+    f1_score?: number;
+    precision?: number;
+    recall?: number;
+  };
 }
 
 interface ValidationResult {
@@ -158,26 +164,64 @@ const TrainingStudio: React.FC = () => {
     setResult(null);
     setProgress({ progress: 0, stage: "starting", message: "Starting..." });
 
+    // Generate session ID for WebSocket
+    const sessionId = `training_${Date.now()}`;
+
+    // Connect to WebSocket for real-time updates
+    const ws = new WebSocket(
+      `ws://localhost:8000/ws/training/${sessionId}`
+    );
+
+    ws.onopen = () => {
+      console.log("WebSocket connected for training updates");
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "training_progress") {
+          setProgress({
+            progress: data.progress,
+            stage: data.stage,
+            message: data.message,
+            metrics: data.metrics,
+          });
+        }
+      } catch (err) {
+        console.error("Error parsing WebSocket message:", err);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("model_name", selectedModel);
     formData.append("target_column", targetColumn);
     formData.append("test_size", testSize.toString());
+    formData.append("session_id", sessionId);
 
     try {
       const response = await api.post("/training/train", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setProgress({
-        progress: 100,
-        stage: "complete",
-        message: "Training complete!",
-      });
       setResult(response.data.result);
+
+      // Close WebSocket after training completes
+      setTimeout(() => {
+        ws.close();
+      }, 2000);
     } catch (err: any) {
       setError(err.response?.data?.detail || "Error training model");
       setProgress(null);
+      ws.close();
     } finally {
       setTraining(false);
     }
@@ -476,6 +520,59 @@ const TrainingStudio: React.FC = () => {
                     <Typography variant="caption" color="text.secondary">
                       Stage: {progress.stage}
                     </Typography>
+
+                    {progress.metrics && (
+                      <Box
+                        sx={{
+                          mt: 1,
+                          p: 1,
+                          bgcolor: "primary.dark",
+                          borderRadius: 1,
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
+                          sx={{ fontWeight: "bold", display: "block", mb: 0.5 }}
+                        >
+                          Real-time Metrics:
+                        </Typography>
+                        <Box display="flex" gap={2} flexWrap="wrap">
+                          {progress.metrics.accuracy !== undefined && (
+                            <Chip
+                              size="small"
+                              label={`Accuracy: ${(
+                                progress.metrics.accuracy * 100
+                              ).toFixed(2)}%`}
+                              color="success"
+                            />
+                          )}
+                          {progress.metrics.f1_score !== undefined && (
+                            <Chip
+                              size="small"
+                              label={`F1: ${progress.metrics.f1_score.toFixed(
+                                4
+                              )}`}
+                            />
+                          )}
+                          {progress.metrics.precision !== undefined && (
+                            <Chip
+                              size="small"
+                              label={`Precision: ${progress.metrics.precision.toFixed(
+                                4
+                              )}`}
+                            />
+                          )}
+                          {progress.metrics.recall !== undefined && (
+                            <Chip
+                              size="small"
+                              label={`Recall: ${progress.metrics.recall.toFixed(
+                                4
+                              )}`}
+                            />
+                          )}
+                        </Box>
+                      </Box>
+                    )}
                   </Stack>
                 </Paper>
               )}

@@ -3,16 +3,30 @@
 from __future__ import annotations
 
 import io
+import logging
+import traceback
 from datetime import datetime
 from typing import Any, Dict, List
 
 import pandas as pd
-from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    HTTPException,
+    Request,
+    UploadFile,
+    WebSocket,
+    WebSocketDisconnect,
+)
 from fastapi.responses import JSONResponse
 
 from app.services.analytics_service import AnalyticsService
 from app.services.model_service import ModelService
 from app.services.training_service import TrainingService
+from app.services.websocket_manager import manager as ws_manager
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -438,6 +452,7 @@ async def train_new_model(
     model_name: str = "RandomForest",
     target_column: str = "koi_disposition",
     test_size: float = 0.2,
+    session_id: str | None = None,
     training_service: TrainingService = Depends(get_training_service)
 ) -> JSONResponse:
     """Train a new model with uploaded data."""
@@ -455,6 +470,10 @@ async def train_new_model(
         for param_name, param_info in default_params.items():
             hyperparameters[param_name] = param_info.get("default")
         
+        # Generate session_id if not provided
+        if not session_id:
+            session_id = f"training_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
         # Train model
         result = await training_service.train_model(
             data=df,
@@ -462,12 +481,14 @@ async def train_new_model(
             model_name=model_name,
             hyperparameters=hyperparameters,
             test_size=test_size,
+            session_id=session_id,
         )
         
         return JSONResponse(
             content={
                 "status": "success",
                 "result": result,
+                "session_id": session_id,
                 "timestamp": datetime.now().isoformat(),
             }
         )
@@ -497,4 +518,22 @@ async def get_training_history(
         )
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Error retrieving history: {exc}") from exc
+
+
+@router.websocket("/ws/training/{session_id}")
+async def websocket_training(websocket: WebSocket, session_id: str):
+    """WebSocket endpoint for real-time training updates."""
+    await ws_manager.connect(websocket, session_id)
+    try:
+        while True:
+            # Keep connection alive and receive any client messages
+            data = await websocket.receive_text()
+            # Echo back if needed (for debugging)
+            if data == "ping":
+                await ws_manager.send_personal_message({"type": "pong"}, websocket)
+    except WebSocketDisconnect:
+        ws_manager.disconnect(websocket)
+    except Exception as e:
+        logger.error(f"WebSocket error: {e}")
+        ws_manager.disconnect(websocket)
 

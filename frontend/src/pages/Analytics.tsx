@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { CloudUpload, ExpandMore, Assessment } from "@mui/icons-material";
 import apiClient from "../services/api.ts";
+import { setAnalyticsData as storeAnalyticsData } from "../services/analyticsStore.ts";
 
 interface AnalyticsResult {
   statistics: any;
@@ -54,9 +55,13 @@ const Analytics = () => {
 
       const response = await apiClient.post("/analytics", formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        timeout: 300000, // 5 minute timeout for large files
       });
 
-      setAnalyticsData(response.data.analytics);
+      const analyticsResult = response.data.analytics;
+      setAnalyticsData(analyticsResult);
+      // Store in global store for DataVisualization page
+      storeAnalyticsData(analyticsResult);
     } catch (err: any) {
       setError(err.response?.data?.detail || "Failed to generate analytics");
       console.error("Error generating analytics:", err);
@@ -145,12 +150,36 @@ const Analytics = () => {
         {loading && (
           <Card>
             <CardContent>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <CircularProgress />
-                <Typography>
-                  Analyzing dataset and generating visualizations...
+              <Stack spacing={2}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <CircularProgress />
+                  <Typography variant="h6">
+                    Generating Analytics...
+                  </Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  Please wait while we process your data. This may take a few moments.
                 </Typography>
-              </Box>
+                <Box sx={{ pl: 6 }}>
+                  <Stack spacing={0.5}>
+                    <Typography variant="body2" color="text.secondary">
+                      • Loading dataset and preprocessing...
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      • Running predictions with trained model...
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      • Generating confusion matrix and metrics...
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      • Creating ROC curves and feature importance plots...
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      • Finalizing visualizations...
+                    </Typography>
+                  </Stack>
+                </Box>
+              </Stack>
             </CardContent>
           </Card>
         )}
