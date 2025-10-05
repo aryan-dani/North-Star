@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
-// Create a theme instance with space-themed colors
+// Create a theme instance with space-themed colors and Poppins font
 const theme = createTheme({
   palette: {
     mode: "dark",
@@ -20,6 +20,12 @@ const theme = createTheme({
     info: {
       main: "#29b6f6",
     },
+    warning: {
+      main: "#ffa726",
+    },
+    error: {
+      main: "#ef5350",
+    },
     background: {
       default: "#0a0e27", // Deep space blue
       paper: "#1a1f3a", // Slightly lighter for cards
@@ -30,9 +36,21 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-    h4: {
+    fontFamily: '"Poppins", "Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    h1: {
       fontWeight: 700,
+      letterSpacing: "-1px",
+    },
+    h2: {
+      fontWeight: 700,
+      letterSpacing: "-0.8px",
+    },
+    h3: {
+      fontWeight: 600,
+      letterSpacing: "-0.5px",
+    },
+    h4: {
+      fontWeight: 600,
       letterSpacing: "-0.5px",
     },
     h5: {
@@ -41,13 +59,24 @@ const theme = createTheme({
     h6: {
       fontWeight: 600,
     },
+    button: {
+      fontWeight: 600,
+      textTransform: "none",
+    },
   },
   components: {
     MuiCard: {
       styleOverrides: {
         root: {
           backgroundImage: "none",
-          borderRadius: 12,
+          borderRadius: 16,
+          border: "1px solid rgba(100, 181, 246, 0.1)",
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          "&:hover": {
+            border: "1px solid rgba(100, 181, 246, 0.3)",
+            transform: "translateY(-4px)",
+            boxShadow: "0 8px 24px rgba(100, 181, 246, 0.15)",
+          },
         },
       },
     },
@@ -55,15 +84,55 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: "none",
-          borderRadius: 8,
+          borderRadius: 10,
           fontWeight: 600,
+          padding: "10px 24px",
+          transition: "all 0.3s ease",
+          "&:hover": {
+            transform: "translateY(-2px)",
+            boxShadow: "0 6px 20px rgba(100, 181, 246, 0.3)",
+          },
+        },
+        contained: {
+          background: "linear-gradient(135deg, #64b5f6 0%, #1976d2 100%)",
+          "&:hover": {
+            background: "linear-gradient(135deg, #90caf9 0%, #2196f3 100%)",
+          },
         },
       },
     },
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 10,
+          fontWeight: 500,
+          transition: "all 0.2s ease",
+          "&:hover": {
+            transform: "scale(1.05)",
+          },
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: "none",
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          borderBottom: "1px solid rgba(100, 181, 246, 0.1)",
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          fontWeight: 600,
+          fontSize: "1rem",
         },
       },
     },

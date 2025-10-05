@@ -6,6 +6,8 @@ import Dashboard from "./pages/Dashboard.tsx";
 import Predict from "./pages/Predict.tsx";
 import Analytics from "./pages/Analytics.tsx";
 import ModelInfo from "./pages/ModelInfo.tsx";
+import Models from "./pages/Models.tsx";
+import Learn from "./pages/Learn.tsx";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
             <Route path="/predict" element={<Predict />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/model-info" element={<ModelInfo />} />
+            <Route path="/models" element={<Models />} />
+            <Route path="/learn" element={<Learn />} />
           </Routes>
         </Layout>
       </Router>

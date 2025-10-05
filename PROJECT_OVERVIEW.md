@@ -13,6 +13,7 @@
 North Star is a comprehensive machine learning web application designed to identify and classify exoplanet candidates from NASA's Kepler mission data. The system combines a high-performance Python backend with a modern React frontend to provide researchers and enthusiasts with powerful tools for exoplanet analysis.
 
 ### Key Achievements
+
 - ✅ **76.05% Classification Accuracy** with RandomForest model
 - ✅ **24 Features** including orbital parameters and stellar properties
 - ✅ **3 Target Classes**: CANDIDATE, CONFIRMED, FALSE POSITIVE
@@ -136,13 +137,16 @@ North-Star/
 ## 🚀 Features
 
 ### Backend Features
+
 1. **Model Service**
+
    - Load trained ML models dynamically
    - Make predictions on single samples or batches
    - Support for CSV and JSON input formats
    - Confidence scoring and probability distributions
 
 2. **Analytics Service**
+
    - Generate comprehensive performance metrics
    - Create 7+ visualization types
    - Statistical analysis of predictions
@@ -157,19 +161,23 @@ North-Star/
    - Health checks and model info
 
 ### Frontend Features
+
 1. **Dashboard**
+
    - Real-time model status display
    - Quick statistics overview
    - Performance metrics visualization
    - Quick navigation to features
 
 2. **Prediction Interface**
+
    - Batch CSV upload for bulk predictions
    - Manual form for single predictions
    - Results table with confidence scores
    - Probability visualization
 
 3. **Analytics Dashboard**
+
    - Upload datasets for comprehensive analysis
    - Interactive plot accordions
    - Statistics cards with key metrics
@@ -183,6 +191,7 @@ North-Star/
    - Training metadata
 
 ### Design Features
+
 - 🌌 **Space-themed dark mode** UI
 - 🎨 **Gradient effects** and professional styling
 - 📱 **Responsive design** for all screen sizes
@@ -194,34 +203,37 @@ North-Star/
 ## 🛠️ Technology Stack
 
 ### Backend
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Python | 3.10+ | Core language |
-| FastAPI | 0.104+ | Web framework |
-| scikit-learn | 1.4+ | Machine learning |
-| pandas | 2.0+ | Data manipulation |
-| NumPy | 1.26+ | Numerical computing |
-| matplotlib | 3.8+ | Plotting |
-| seaborn | 0.13+ | Statistical visualization |
-| joblib | 1.3+ | Model serialization |
-| uvicorn | 0.24+ | ASGI server |
+
+| Technology   | Version | Purpose                   |
+| ------------ | ------- | ------------------------- |
+| Python       | 3.10+   | Core language             |
+| FastAPI      | 0.104+  | Web framework             |
+| scikit-learn | 1.4+    | Machine learning          |
+| pandas       | 2.0+    | Data manipulation         |
+| NumPy        | 1.26+   | Numerical computing       |
+| matplotlib   | 3.8+    | Plotting                  |
+| seaborn      | 0.13+   | Statistical visualization |
+| joblib       | 1.3+    | Model serialization       |
+| uvicorn      | 0.24+   | ASGI server               |
 
 ### Frontend
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| React | 19.1+ | UI library |
-| TypeScript | 5.9+ | Type safety |
-| Material-UI | 7.3+ | Component library |
-| React Router | 7.9+ | Routing |
-| Axios | 1.12+ | HTTP client |
-| Vite | 7.1+ | Build tool |
-| Emotion | 11.14+ | CSS-in-JS |
+
+| Technology   | Version | Purpose           |
+| ------------ | ------- | ----------------- |
+| React        | 19.1+   | UI library        |
+| TypeScript   | 5.9+    | Type safety       |
+| Material-UI  | 7.3+    | Component library |
+| React Router | 7.9+    | Routing           |
+| Axios        | 1.12+   | HTTP client       |
+| Vite         | 7.1+    | Build tool        |
+| Emotion      | 11.14+  | CSS-in-JS         |
 
 ---
 
 ## 📊 Machine Learning Models
 
 ### Training Pipeline
+
 The project uses `training_v3.py` to train multiple models:
 
 1. **Logistic Regression** - Baseline linear model
@@ -233,6 +245,7 @@ The project uses `training_v3.py` to train multiple models:
 7. **Naive Bayes** - Probabilistic classifier
 
 ### Model Performance
+
 - **Training Samples**: 16,985
 - **Test Samples**: 4,246
 - **Features**: 24 (20 numeric, 4 categorical)
@@ -241,6 +254,7 @@ The project uses `training_v3.py` to train multiple models:
 - **Training Time**: ~30 seconds per model
 
 ### Feature Engineering
+
 - Numeric features: Orbital parameters, stellar magnitudes, signal characteristics
 - Categorical features: Mission ID, object names
 - Preprocessing: StandardScaler for numeric, OneHotEncoder for categorical
@@ -251,6 +265,7 @@ The project uses `training_v3.py` to train multiple models:
 ## 🎯 NASA Space Apps Challenge Alignment
 
 ### Challenge Requirements
+
 ✅ **Analyze Exoplanet Data**: Uses official NASA Kepler catalog  
 ✅ **Machine Learning**: 7 trained models with ensemble techniques  
 ✅ **Web Interface**: Professional full-stack application  
@@ -263,6 +278,7 @@ The project uses `training_v3.py` to train multiple models:
 ✅ **Open Source**: MIT License with contribution guidelines
 
 ### Innovation Points
+
 1. **Multi-Model Comparison**: Train and compare 7 different algorithms
 2. **Comprehensive Analytics**: Generate publication-ready visualizations
 3. **Professional UI/UX**: Space-themed design matching the domain
@@ -274,6 +290,7 @@ The project uses `training_v3.py` to train multiple models:
 ## 🚦 Quick Start
 
 ### Backend Setup
+
 ```powershell
 # Install dependencies
 pip install -r requirements.txt
@@ -286,6 +303,7 @@ python main.py
 **Access**: http://localhost:8000/docs
 
 ### Frontend Setup
+
 ```powershell
 # Navigate to frontend
 cd frontend
@@ -300,6 +318,7 @@ npm run dev
 **Access**: http://localhost:5174
 
 ### Training Models
+
 ```powershell
 # Train all models
 cd src
@@ -310,19 +329,19 @@ python training_v3.py
 
 ## 📈 API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | API information |
-| `/health` | GET | Health check |
-| `/model/info` | GET | Model metadata |
-| `/model/metrics` | GET | Performance metrics |
-| `/model/features` | GET | Feature list |
-| `/predict` | POST | Single file prediction |
-| `/predict/batch` | POST | Detailed predictions |
-| `/predict/json` | POST | JSON prediction |
-| `/analytics` | POST | Full analytics report |
-| `/analytics/statistics` | POST | Statistics only |
-| `/analytics/plots/types` | GET | Available plots |
+| Endpoint                 | Method | Description            |
+| ------------------------ | ------ | ---------------------- |
+| `/`                      | GET    | API information        |
+| `/health`                | GET    | Health check           |
+| `/model/info`            | GET    | Model metadata         |
+| `/model/metrics`         | GET    | Performance metrics    |
+| `/model/features`        | GET    | Feature list           |
+| `/predict`               | POST   | Single file prediction |
+| `/predict/batch`         | POST   | Detailed predictions   |
+| `/predict/json`          | POST   | JSON prediction        |
+| `/analytics`             | POST   | Full analytics report  |
+| `/analytics/statistics`  | POST   | Statistics only        |
+| `/analytics/plots/types` | GET    | Available plots        |
 
 **Full documentation**: See `backend/API_DOCS.md`
 
@@ -331,12 +350,14 @@ python training_v3.py
 ## 🧪 Testing
 
 ### Backend Tests
+
 ```powershell
 cd backend
 python test_api.py
 ```
 
 ### Frontend Tests
+
 ```powershell
 cd frontend
 npm run lint
@@ -358,6 +379,7 @@ npm run build  # Test production build
 ## 🤝 Contributing
 
 We welcome contributions! Please see:
+
 - `CONTRIBUTING.md` - Contribution guidelines
 - `CODE_OF_CONDUCT.md` - Community standards
 - `SECURITY.md` - Security policies

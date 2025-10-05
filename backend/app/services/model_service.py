@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+import re
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -27,11 +29,46 @@ class ModelService:
         self.numeric_features: Optional[List[str]] = None
         self.categorical_features: Optional[List[str]] = None
         self.target_classes: Optional[List[str]] = None
+        self.current_model_name = "RandomForest"  # Track which model is loaded
 
-    def load_model(self, model_path: Optional[str] = None):
+    def get_available_models(self) -> List[Dict[str, Any]]:
+        """Get list of all available trained models."""
+        model_files = list(MODELS_DIR.glob("*_classification_*.joblib"))
+        
+        models = []
+        for model_file in model_files:
+            name = model_file.stem
+            # Extract model name and timestamp
+            match = re.match(r'([^_]+)_classification_(\d{8}_\d{6})', name)
+            if match:
+                model_name = match.group(1)
+                timestamp_str = match.group(2)
+                try:
+                    timestamp = datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S")
+                    models.append({
+                        "name": model_name,
+                        "path": str(model_file),
+                        "filename": model_file.name,
+                        "timestamp": timestamp.isoformat(),
+                        "is_loaded": str(model_file) == self.model_path
+                    })
+                except ValueError:
+                    pass
+        
+        return sorted(models, key=lambda x: x['timestamp'], reverse=True)
+
+    def load_model(self, model_path: Optional[str] = None, model_name: Optional[str] = None):
         """Load a serialised pipeline from disk."""
         if model_path:
             self.model_path = model_path
+        elif model_name:
+            # Load specific model by name
+            model_files = list(MODELS_DIR.glob(f"{model_name}_*.joblib"))
+            if not model_files:
+                raise FileNotFoundError(
+                    f"No {model_name} model found in models directory."
+                )
+            self.model_path = str(sorted(model_files)[-1])
 
         if not self.model_path:
             model_files = list(MODELS_DIR.glob("RandomForest_*.joblib"))
@@ -46,6 +83,14 @@ class ModelService:
             self.model_path = str(sorted(model_files)[-1])
 
         self.model = load(self.model_path)
+        
+        # Extract model name from path
+        path_obj = Path(self.model_path)
+        match = re.match(r'([^_]+)_', path_obj.stem)
+        if match:
+            self.current_model_name = match.group(1)
+            self.model_name = self.current_model_name
+        
         self._extract_model_info()
         return self.model
 

@@ -15,6 +15,7 @@ North-Star is a complete full-stack machine learning web application for identif
 ### Complete Setup (Frontend + Backend)
 
 **Backend:**
+
 ```powershell
 # Install Python dependencies
 pip install -r requirements.txt
@@ -23,9 +24,11 @@ pip install -r requirements.txt
 cd backend
 python main.py
 ```
+
 Access at: http://localhost:8000/docs
 
 **Frontend:**
+
 ```powershell
 # Install Node dependencies
 cd frontend
@@ -34,6 +37,7 @@ npm install
 # Start the development server
 npm run dev
 ```
+
 Access at: http://localhost:5174
 
 ### Training Models

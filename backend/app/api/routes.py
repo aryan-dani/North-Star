@@ -317,3 +317,52 @@ async def get_available_plots() -> JSONResponse:
             ],
         }
     )
+
+
+@router.get("/models/available")
+async def get_available_models(model_service: ModelService = Depends(get_model_service)) -> JSONResponse:
+    """Get list of all trained models available in the models directory."""
+    try:
+        models = model_service.get_available_models()
+        return JSONResponse(
+            content={
+                "status": "success",
+                "models": models,
+                "total": len(models),
+                "current_model": model_service.current_model_name,
+            }
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Error retrieving models: {exc}") from exc
+
+
+@router.post("/models/switch")
+async def switch_model(
+    request: Request,
+    data: Dict[str, Any],
+    model_service: ModelService = Depends(get_model_service)
+) -> JSONResponse:
+    """Switch to a different trained model."""
+    try:
+        model_name = data.get("model_name")
+        if not model_name:
+            raise HTTPException(status_code=400, detail="model_name is required")
+        
+        # Load the new model
+        model_service.load_model(model_name=model_name)
+        
+        # Update the app state
+        request.app.state.model_service = model_service
+        
+        info = model_service.get_model_info()
+        return JSONResponse(
+            content={
+                "status": "success",
+                "message": f"Switched to {model_name} model",
+                "model_info": info,
+            }
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Error switching model: {exc}") from exc
