@@ -159,7 +159,7 @@ const Models = () => {
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Available Models ({models.length})
+              Available Models ({models?.length || 0})
             </Typography>
             <TableContainer component={Paper} sx={{ mt: 2 }}>
               <Table>
@@ -183,7 +183,7 @@ const Models = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {models.map((model) => (
+                  {(models || []).map((model) => (
                     <TableRow
                       key={model.filename}
                       sx={{

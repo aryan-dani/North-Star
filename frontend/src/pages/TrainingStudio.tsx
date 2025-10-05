@@ -322,7 +322,7 @@ const TrainingStudio: React.FC = () => {
                       />
                     </Box>
 
-                    {validation.issues.length > 0 && (
+                    {validation?.issues?.length > 0 && (
                       <Box>
                         <Typography variant="subtitle2" color="error">
                           Issues:
@@ -340,7 +340,7 @@ const TrainingStudio: React.FC = () => {
                       </Box>
                     )}
 
-                    {validation.warnings.length > 0 && (
+                    {validation?.warnings?.length > 0 && (
                       <Box>
                         <Typography variant="subtitle2" color="warning.main">
                           Warnings:
