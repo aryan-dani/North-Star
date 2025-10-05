@@ -39,6 +39,14 @@ def get_model_service(request: Request) -> ModelService:
     return service
 
 
+def get_model_service_optional(request: Request) -> ModelService:
+    """Get model service without requiring a loaded model (for management operations)."""
+    service: ModelService | None = getattr(request.app.state, "model_service", None)
+    if service is None:
+        raise HTTPException(status_code=503, detail="Model service unavailable")
+    return service
+
+
 def get_analytics_service(request: Request) -> AnalyticsService:
     service: AnalyticsService | None = getattr(request.app.state, "analytics_service", None)
     if service is None:
@@ -346,7 +354,7 @@ async def get_available_plots() -> JSONResponse:
 
 
 @router.get("/models/available")
-async def get_available_models(model_service: ModelService = Depends(get_model_service)) -> JSONResponse:
+async def get_available_models(model_service: ModelService = Depends(get_model_service_optional)) -> JSONResponse:
     """Get list of all trained models available in the models directory."""
     try:
         models = model_service.get_available_models()
@@ -366,7 +374,7 @@ async def get_available_models(model_service: ModelService = Depends(get_model_s
 async def switch_model(
     request: Request,
     data: Dict[str, Any],
-    model_service: ModelService = Depends(get_model_service)
+    model_service: ModelService = Depends(get_model_service_optional)
 ) -> JSONResponse:
     """Switch to a different trained model."""
     try:
