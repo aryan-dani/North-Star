@@ -153,12 +153,11 @@ const Analytics = () => {
               <Stack spacing={2}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                   <CircularProgress />
-                  <Typography variant="h6">
-                    Generating Analytics...
-                  </Typography>
+                  <Typography variant="h6">Generating Analytics...</Typography>
                 </Box>
                 <Typography variant="body2" color="text.secondary">
-                  Please wait while we process your data. This may take a few moments.
+                  Please wait while we process your data. This may take a few
+                  moments.
                 </Typography>
                 <Box sx={{ pl: 6 }}>
                   <Stack spacing={0.5}>

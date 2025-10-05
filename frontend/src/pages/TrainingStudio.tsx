@@ -168,9 +168,7 @@ const TrainingStudio: React.FC = () => {
     const sessionId = `training_${Date.now()}`;
 
     // Connect to WebSocket for real-time updates
-    const ws = new WebSocket(
-      `ws://localhost:8000/ws/training/${sessionId}`
-    );
+    const ws = new WebSocket(`ws://localhost:8000/ws/training/${sessionId}`);
 
     ws.onopen = () => {
       console.log("WebSocket connected for training updates");
