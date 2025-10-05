@@ -1,0 +1,51 @@
+{
+  "timestamp": "20251005_134019",
+  "task": "classification",
+  "target_column": "koi_disposition",
+  "dataset": {
+    "total_samples": 21250,
+    "train_samples": 16982,
+    "test_samples": 4246,
+    "numeric_features": 20,
+    "categorical_features": 4,
+    "target_classes": 3
+  },
+  "best_model": {
+    "name": "RandomForest",
+    "score": 0.760641978123803,
+    "path": "../models\\best_model_classification_20251005_134019.joblib"
+  },
+  "all_models": [
+    {
+      "name": "LogisticRegression",
+      "path": "../models\\LogisticRegression_classification_20251005_134019.joblib",
+      "score": 0.6965873738568331
+    },
+    {
+      "name": "RandomForest",
+      "path": "../models\\RandomForest_classification_20251005_134019.joblib",
+      "score": 0.760641978123803
+    },
+    {
+      "name": "GradientBoosting",
+      "path": "../models\\GradientBoosting_classification_20251005_134019.joblib",
+      "score": 0.7338519024086062
+    },
+    {
+      "name": "DecisionTree",
+      "path": "../models\\DecisionTree_classification_20251005_134019.joblib",
+      "score": 0.7136923276809063
+    },
+    {
+      "name": "SVM",
+      "path": "../models\\SVM_classification_20251005_134019.joblib",
+      "score": 0.6295201128054448
+    },
+    {
+      "name": "KNN",
+      "path": "../models\\KNN_classification_20251005_134019.joblib",
+      "score": 0.6572656143397805
+    }
+  ],
+  "results_file": "../output\\model_results_20251005_134019.csv"
+}

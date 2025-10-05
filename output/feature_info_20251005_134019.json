@@ -1,0 +1,33 @@
+{
+  "task": "classification",
+  "target_column": "koi_disposition",
+  "numeric_features": [
+    "ra",
+    "dec",
+    "koi_period",
+    "koi_duration",
+    "koi_depth",
+    "koi_ror",
+    "koi_model_snr",
+    "koi_num_transits",
+    "koi_impact",
+    "koi_dor",
+    "koi_teq",
+    "koi_srho",
+    "koi_kepmag",
+    "koi_gmag",
+    "koi_rmag",
+    "koi_imag",
+    "koi_zmag",
+    "koi_jmag",
+    "koi_hmag",
+    "koi_kmag"
+  ],
+  "categorical_features": [
+    "mission_id",
+    "object_name",
+    "host_name",
+    "source_primary_id"
+  ],
+  "total_features": 24
+}
