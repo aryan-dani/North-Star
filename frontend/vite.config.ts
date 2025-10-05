@@ -5,12 +5,14 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: true, // Allow external connections
-    allowedHosts: [
-      'localhost',
-      '127.0.0.1',
-      'north-star.ramkansal.com',
-    ],
+    host: '0.0.0.0', // Listen on all network interfaces
+    port: 5173,
+    strictPort: false,
+    cors: true, // Enable CORS for dev server
+    hmr: {
+      protocol: 'ws',
+      host: 'localhost', // Use localhost for HMR in development
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
@@ -19,4 +21,6 @@ export default defineConfig({
       },
     },
   },
+  // For production build
+  base: '/',
 })
